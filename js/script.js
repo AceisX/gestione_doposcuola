@@ -19,3 +19,25 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
 });
+
+// Selezione degli elementi del modal
+const modal = document.getElementById('alunnoModal');
+const openModalBtn = document.getElementById('openModal');
+const closeModalBtn = document.querySelector('.close');
+
+// Apri il modal
+openModalBtn.addEventListener('click', () => {
+    modal.style.display = 'block';
+});
+
+// Chiudi il modal
+closeModalBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+});
+
+// Chiudi il modal cliccando fuori dal contenuto
+window.addEventListener('click', (event) => {
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+});
