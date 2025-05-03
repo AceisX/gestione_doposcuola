@@ -9,14 +9,12 @@ function closeReportModal() {
 }
 
 // Chiude il modale se l'utente clicca fuori
-window.onclick = function(event) {
+window.onclick = function (event) {
     const modal = document.getElementById('report-modal');
     if (event.target === modal) {
         modal.style.display = 'none';
     }
 };
-
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const infoButtons = document.querySelectorAll('.info-btn');
@@ -34,45 +32,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     if (data.success) {
                         infoContent.innerHTML = `
-                            <h3>${data.alunno.nome_completo}</h3>
-                            <p><strong>Scuola:</strong> ${data.alunno.scuola}</p>
-                            <p><strong>Pacchetto:</strong> ${data.alunno.pacchetto}</p>
-                            <p><strong>Prezzo Pagato:</strong> €${data.alunno.prezzo_finale}</p>
-                            <p><strong>Stato:</strong> ${data.alunno.stato}</p>
-                            <p><strong>Data Iscrizione:</strong> ${data.alunno.data_iscrizione}</p>
-                            
-                            <h4>Genitore</h4>
-                            <p><strong>Nome:</strong> ${data.genitore.nome_completo}</p>
-                            <p><strong>Residenza:</strong> ${data.genitore.residenza}</p>
-                            <p><strong>Codice Fiscale:</strong> ${data.genitore.codice_fiscale}</p>
-                            <p><strong>Telefono:</strong> ${data.genitore.telefono}</p>
-                            
-                            <h4>Pagamenti</h4>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Data Pagamento</th>
-                                        <th>Mese Pagato</th>
-                                        <th>Tipologia</th>
-                                        <th>Totale Pagato</th>
-                                        <th>Ore Effettuate</th>
-                                        <th>Azioni</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${data.pagamenti.map(pagamento => `
+                            <div class="info-grid">
+                                <div class="info-column">
+                                    <h3>Info Alunno</h3>
+                                    <p><strong>Nome Completo:</strong> ${data.alunno.nome_completo}</p>
+                                    <p><strong>Scuola:</strong> ${data.alunno.scuola}</p>
+                                    <p><strong>Pacchetto:</strong> ${data.alunno.pacchetto}</p>
+                                    <p><strong>Prezzo Pagato:</strong> €${data.alunno.prezzo_finale}</p>
+                                    <p><strong>Stato:</strong> ${data.alunno.stato}</p>
+                                    <p><strong>Data Iscrizione:</strong> ${data.alunno.data_iscrizione}</p>
+                                </div>
+                                <div class="info-column">
+                                    <h3>Info Genitore</h3>
+                                    <p><strong>Nome:</strong> ${data.genitore.nome_completo}</p>
+                                    <p><strong>Residenza:</strong> ${data.genitore.residenza}</p>
+                                    <p><strong>Codice Fiscale:</strong> ${data.genitore.codice_fiscale}</p>
+                                    <p><strong>Telefono:</strong> ${data.genitore.telefono}</p>
+                                </div>
+                            </div>
+                            <div class="info-section">
+                                <h3>Pagamenti</h3>
+                                <table class="info-table">
+                                    <thead>
                                         <tr>
-                                            <td>${pagamento.data_pagamento}</td>
-                                            <td>${pagamento.mese_pagato}</td>
-                                            <td>${pagamento.tipologia}</td>
-                                            <td>€${pagamento.totale_pagato}</td>
-                                            <td>${pagamento.ore_effettuate}</td>
-                                            <td>
-                                                <button onclick="eliminaPagamento(${pagamento.id})">Elimina</button>
-                                            </td>
-                                        </tr>`).join('')}
-                                </tbody>
-                            </table>
+                                            <th>Data Pagamento</th>
+                                            <th>Mese Pagato</th>
+                                            <th>Tipologia</th>
+                                            <th>Totale Pagato</th>
+                                            <th>Ore Effettuate</th>
+                                            <th>Azioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${data.pagamenti.map(pagamento => `
+                                            <tr>
+                                                <td>${pagamento.data_pagamento}</td>
+                                                <td>${pagamento.mese_pagato}</td>
+                                                <td>${pagamento.tipologia}</td>
+                                                <td>€${pagamento.totale_pagato}</td>
+                                                <td>${pagamento.ore_effettuate}</td>
+                                                <td>
+                                                    <button onclick="eliminaPagamento(${pagamento.id})"><i class="fa-solid fa-trash-can" style="color: #ffffff;"></i></button>
+                                                </td>
+                                            </tr>`).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
                         `;
                     } else {
                         infoContent.innerHTML = `<p>Errore nel caricamento dei dati.</p>`;
@@ -99,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             infoModal.style.display = 'none';
         }
     });
+
 
     // Funzione per eliminare un pagamento
     window.eliminaPagamento = function (pagamentoId) {

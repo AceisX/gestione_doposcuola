@@ -12,11 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $residenza = $_POST['residenza'];
     $codiceFiscale = $_POST['codice_fiscale'];
     $telefono = $_POST['telefono'];
+	 $prezzo_finale = $_POST['prezzo_finale'];
 
     // Aggiorna l'anagrafica dell'alunno
-    $sqlAlunno = "UPDATE alunni SET nome = ?, cognome = ?, scuola = ?, id_pacchetto = ?, stato = ? WHERE id = ?";
+    $sqlAlunno = "UPDATE alunni SET nome = ?, cognome = ?, scuola = ?, id_pacchetto = ?, prezzo_finale = ?, stato = ? WHERE id = ?";
     $stmtAlunno = $conn->prepare($sqlAlunno);
-    $stmtAlunno->bind_param("sssisi", $nome, $cognome, $scuola, $idPacchetto, $stato, $alunnoId);
+    $stmtAlunno->bind_param("sssiisi", $nome, $cognome, $scuola, $idPacchetto, $prezzo_finale, $stato, $alunnoId);
     $stmtAlunno->execute();
 
     // Aggiorna i dati del genitore

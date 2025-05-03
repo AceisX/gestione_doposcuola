@@ -50,4 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     echo json_encode(['success' => false, 'message' => 'Richiesta non valida.']);
 }
+
+// Controllo condizionale
+if (!isset($_SESSION['logged_in'])) {
+    header("Location: ../index.php");
+    exit;
+}
 ?>
