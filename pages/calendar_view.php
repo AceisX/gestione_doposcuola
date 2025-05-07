@@ -72,9 +72,9 @@ $daysInMonth = date("t", strtotime("$year-$month-01"));
 <div class="calendar">
     <div class="calendar-header">
         <h2>Calendario Lezioni - <?php echo date("F Y", strtotime("$year-$month-01")); ?></h2>
-        <form method="GET">
+        <form method="GET" >
             <label for="month">Seleziona mese:</label>
-            <input type="month" id="month" name="month" value="<?php echo "$year-$month"; ?>">
+            <input type="month" id="month" name="month" style="width: 70%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; margin-right: 10px;" value="<?php echo "$year-$month"; ?>">
             <button type="submit" class="btn">Vai</button>
         </form>
     </div>
@@ -123,7 +123,7 @@ $daysInMonth = date("t", strtotime("$year-$month-01"));
                                         </td>
                                     <?php endfor; ?>
                                     <td>
-                                        <button class="delete-btn" data-date="<?php echo $currentDate; ?>" data-tutor="<?php echo $tutorId; ?>">Elimina</button>
+                                        <button class="delete-btn" data-date="<?php echo $currentDate; ?>" data-tutor="<?php echo $tutorId; ?>"><i class="fa-solid fa-trash-can" style="font-size: 12px;"></i></button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -205,7 +205,7 @@ $daysInMonth = date("t", strtotime("$year-$month-01"));
     }
 
     .calendar-day.holiday {
-        background-color: #572D2D;
+        background-color: #273469;
         color: white;
         text-align: center;
     }
@@ -232,12 +232,12 @@ $daysInMonth = date("t", strtotime("$year-$month-01"));
     }
 
     .half-lesson {
-        background-color: yellow;
+        color: #C1666B;
     }
 
     .delete-btn {
         padding: 5px 10px;
-        background-color: #d9534f;
+        background-color: #007bff;
         color: white;
         border: none;
         border-radius: 5px;
