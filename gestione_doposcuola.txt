@@ -1,0 +1,247 @@
+
+CREATE TABLE `alunni` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `cognome` varchar(100) NOT NULL,
+  `scuola` varchar(100) NOT NULL,
+  `id_pacchetto` int(11) DEFAULT NULL,
+  `prezzo_finale` decimal(10,2) NOT NULL,
+  `stato` enum('attivo','disattivato') DEFAULT 'attivo',
+  `data_iscrizione` date NOT NULL,
+  `id_genitore` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `genitori` (
+  `id` int(11) NOT NULL,
+  `nome_completo` varchar(100) NOT NULL,
+  `residenza` varchar(255) DEFAULT NULL,
+  `codice_fiscale` varchar(16) NOT NULL,
+  `telefono` varchar(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `lezioni` (
+  `id` int(11) NOT NULL,
+  `data` date NOT NULL,
+  `id_tutor` int(11) NOT NULL,
+  `slot_orario` enum('15:30-16:30','16:30-17:30','17:30-18:30') NOT NULL,
+  `durata` tinyint(1) NOT NULL DEFAULT 0,
+  `tipo` enum('singolo','gruppo') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+CREATE TABLE `lezioni_alunni` (
+  `id_lezione` int(11) NOT NULL,
+  `id_alunno` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `pacchetti` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `tipo` enum('orario','mensile') NOT NULL,
+  `ore` int(11) NOT NULL,
+  `prezzo` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+CREATE TABLE `pagamenti` (
+  `id` int(11) NOT NULL,
+  `id_alunno` int(11) DEFAULT NULL,
+  `id_pacchetto` int(11) DEFAULT NULL,
+  `data_pagamento` date NOT NULL,
+  `metodo_pagamento` varchar(50) NOT NULL,
+  `totale_pagato` decimal(10,2) NOT NULL,
+  `tipologia` enum('saldo','acconto') NOT NULL,
+  `mese_pagato` varchar(50) NOT NULL,
+  `ore_effettuate` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+CREATE TABLE `storico_modifiche` (
+  `id` int(11) NOT NULL,
+  `id_utente` int(11) DEFAULT NULL,
+  `id_alunno` int(11) DEFAULT NULL,
+  `tipo_modifica` varchar(50) NOT NULL,
+  `dettagli` text DEFAULT NULL,
+  `data_modifica` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE `tutor` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `cognome` varchar(100) NOT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `telefono` varchar(15) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
+CREATE TABLE `utenti` (
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+--
+-- Indici per le tabelle `alunni`
+--
+ALTER TABLE `alunni`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_pacchetto` (`id_pacchetto`),
+  ADD KEY `id_genitore` (`id_genitore`);
+
+--
+-- Indici per le tabelle `genitori`
+--
+ALTER TABLE `genitori`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indici per le tabelle `lezioni`
+--
+ALTER TABLE `lezioni`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_tutor` (`id_tutor`);
+
+--
+-- Indici per le tabelle `lezioni_alunni`
+--
+ALTER TABLE `lezioni_alunni`
+  ADD PRIMARY KEY (`id_lezione`,`id_alunno`),
+  ADD KEY `id_alunno` (`id_alunno`);
+
+--
+-- Indici per le tabelle `pacchetti`
+--
+ALTER TABLE `pacchetti`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indici per le tabelle `pagamenti`
+--
+ALTER TABLE `pagamenti`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_alunno` (`id_alunno`),
+  ADD KEY `id_pacchetto` (`id_pacchetto`);
+
+--
+-- Indici per le tabelle `storico_modifiche`
+--
+ALTER TABLE `storico_modifiche`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_utente` (`id_utente`),
+  ADD KEY `id_alunno` (`id_alunno`);
+
+--
+-- Indici per le tabelle `tutor`
+--
+ALTER TABLE `tutor`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indici per le tabelle `utenti`
+--
+ALTER TABLE `utenti`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT per le tabelle scaricate
+--
+
+--
+-- AUTO_INCREMENT per la tabella `alunni`
+--
+ALTER TABLE `alunni`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+
+--
+-- AUTO_INCREMENT per la tabella `genitori`
+--
+ALTER TABLE `genitori`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+
+--
+-- AUTO_INCREMENT per la tabella `lezioni`
+--
+ALTER TABLE `lezioni`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
+-- AUTO_INCREMENT per la tabella `pacchetti`
+--
+ALTER TABLE `pacchetti`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT per la tabella `pagamenti`
+--
+ALTER TABLE `pagamenti`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT per la tabella `storico_modifiche`
+--
+ALTER TABLE `storico_modifiche`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT per la tabella `tutor`
+--
+ALTER TABLE `tutor`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT per la tabella `utenti`
+--
+ALTER TABLE `utenti`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Limiti per le tabelle scaricate
+--
+
+--
+-- Limiti per la tabella `alunni`
+--
+ALTER TABLE `alunni`
+  ADD CONSTRAINT `alunni_ibfk_1` FOREIGN KEY (`id_pacchetto`) REFERENCES `pacchetti` (`id`),
+  ADD CONSTRAINT `alunni_ibfk_2` FOREIGN KEY (`id_genitore`) REFERENCES `genitori` (`id`);
+
+--
+-- Limiti per la tabella `lezioni`
+--
+ALTER TABLE `lezioni`
+  ADD CONSTRAINT `lezioni_ibfk_1` FOREIGN KEY (`id_tutor`) REFERENCES `tutor` (`id`) ON DELETE CASCADE;
+
+--
+-- Limiti per la tabella `lezioni_alunni`
+--
+ALTER TABLE `lezioni_alunni`
+  ADD CONSTRAINT `lezioni_alunni_ibfk_1` FOREIGN KEY (`id_lezione`) REFERENCES `lezioni` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `lezioni_alunni_ibfk_2` FOREIGN KEY (`id_alunno`) REFERENCES `alunni` (`id`) ON DELETE CASCADE;
+
+--
+-- Limiti per la tabella `pagamenti`
+--
+ALTER TABLE `pagamenti`
+  ADD CONSTRAINT `pagamenti_ibfk_1` FOREIGN KEY (`id_alunno`) REFERENCES `alunni` (`id`),
+  ADD CONSTRAINT `pagamenti_ibfk_2` FOREIGN KEY (`id_pacchetto`) REFERENCES `pacchetti` (`id`);
+
+--
+-- Limiti per la tabella `storico_modifiche`
+--
+ALTER TABLE `storico_modifiche`
+  ADD CONSTRAINT `storico_modifiche_ibfk_1` FOREIGN KEY (`id_utente`) REFERENCES `utenti` (`id`),
+  ADD CONSTRAINT `storico_modifiche_ibfk_2` FOREIGN KEY (`id_alunno`) REFERENCES `alunni` (`id`);
+COMMIT;
+
+
+
+
