@@ -165,7 +165,7 @@ option {
     border: 1px solid #ccc;
     border-radius: 10px;
     width: 80%;
-    max-width: 600px;
+    max-width: 700px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -385,4 +385,143 @@ th.desc::after {
 .form-group div input[type="radio"] {
     margin: 0; /* Rimuove margini extra */
 }
+.fixed-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background-color: #28a745;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
 
+.fixed-btn:hover {
+    background-color: #218838;
+}
+
+/* Modale studenti layout più pulito */
+.student-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.student-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.student-item label {
+    margin-left: 5px;
+}
+
+.form-submit {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.form-submit button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.form-submit button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Stile generale del modale */
+.modal-grid-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
+}
+
+/* Stile per gli Slot Orari */
+.slot-group {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.slot-header label {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.add-student-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	margin-left: 10px;
+}
+
+.add-student-btn i {
+    font-size: 16px;
+    pointer-events: none; /* Evita problemi con il click sull'icona */
+}
+
+.add-student-btn:hover {
+    background-color: #218838;
+}
+
+.slot-body {
+    flex-direction: column;
+    gap: 5px;
+}
+
+.slot-body label {
+    display: inline-block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.selected-students {
+    border: 1px dashed #ccc;
+    padding: 5px;
+    background-color: #fff;
+    border-radius: 3px;
+    min-height: 30px;
+    font-size: 14px;
+    color: #666;
+}
