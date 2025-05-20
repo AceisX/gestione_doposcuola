@@ -1,6 +1,17 @@
 <?php
 require_once 'config.php'; // Collegamento al database
+
+// Inizializziamo la sessione
+session_start();
+
+// Verifichiamo se l'utente è loggato
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header('Location: pages/login.php');
+    exit;
+}
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="it">
@@ -10,14 +21,178 @@ require_once 'config.php'; // Collegamento al database
     <title>Pagamenti Tutor</title>
     <link rel="stylesheet" href="assets/styles.css">
 </head>
-<body>
-    <header>
-        <img src="img/logo.png" alt="Logo" height="75px" style="padding-left: 20px;">
-        <h1>Gestione Tutor e Pagamenti</h1>
-        <a href="scripts/logout.php">Logout</a>
-    </header>
+<style>
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f6f8fa;
+    margin: 0;
+}
 
-    <div class="container">
+
+.container {
+    max-width: 1000px;
+    background: #fff;
+    margin: 40px auto;
+    border-radius: 16px;
+    box-shadow: 0 2px 24px 0 #0002;
+    padding: 30px 40px 40px 40px;
+}
+
+.search-bar {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+#search-tutor {
+    width: 350px;
+    padding: 10px 20px;
+    border-radius: 22px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+}
+#search-results {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 350px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-top: none;
+    z-index: 120;
+    box-shadow: 0 6px 24px 0 #0001;
+}
+#search-results li {
+    padding: 10px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+#search-results li:hover {
+    background: #f6f8fa;
+}
+
+.mensilita-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.mensilita-table th, .mensilita-table td {
+    text-align: center;
+    padding: 13px 6px;
+    border-bottom: 1px solid #eee;
+}
+.mensilita-table th {
+    background: #f3f3f3;
+    color: #333;
+    font-size: 1.06em;
+}
+.mensilita-table tr:last-child td {
+    border-bottom: none;
+}
+
+.paga-badge {
+    padding: 4px 14px;
+    border-radius: 14px;
+    font-weight: bold;
+    font-size: 1.1em;
+    display: inline-block;
+    letter-spacing: .5px;
+}
+.paga-badge.pagato {
+    background: #24b47e;
+    color: #fff;
+}
+.paga-badge.non-pagato {
+    background: #e74c3c;
+    color: #fff;
+}
+button.paga-btn, button.reset-btn {
+    padding: 4px 13px;
+    border: none;
+    border-radius: 13px;
+    background: #3498db;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 0 3px;
+    transition: background .2s;
+}
+button.paga-btn:hover {
+    background: #217dbb;
+}
+button.reset-btn {
+    background: #f39c12;
+}
+button.reset-btn:hover {
+    background: #d35400;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1500;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background: #0008;
+}
+.modal-content {
+    background: #fff;
+    margin: 70px auto;
+    padding: 30px 38px 20px 38px;
+    border-radius: 14px;
+    width: 370px;
+    position: relative;
+}
+.close-btn {
+    position: absolute;
+    right: 18px;
+    top: 13px;
+    font-size: 22px;
+    color: #666;
+    cursor: pointer;
+}
+.form-group {
+    margin-bottom: 18px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #333;
+    font-weight: 500;
+}
+.form-group input[type="number"], .form-group textarea {
+    width: 100%;
+    padding: 7px 11px;
+    border-radius: 7px;
+    border: 1px solid #ccc;
+    font-size: 1.08em;
+}
+.form-group textarea { resize: vertical; }
+.btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #24b47e;
+    color: #fff;
+    font-size: 1.08em;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: background .2s;
+}
+.btn:hover { background: #17835a; }
+</style>
+<body>
+<?php include __DIR__ . '/assets/header.html'; ?>   
+
+ <div class="container">
         <!-- Barra di ricerca -->
         <div class="search-bar">
             <input type="text" id="search-tutor" placeholder="Cerca tutor per nome o cognome...">
@@ -35,7 +210,7 @@ require_once 'config.php'; // Collegamento al database
                         <th>Ore Singole</th>
                         <th>Ore Gruppo</th>
                         <th>Data Pagamento</th>
-                        <th>Azioni</th>
+                        <th>Note</th>
                     </tr>
                 </thead>
                 <tbody id="mensilita-rows">
@@ -118,21 +293,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (data.success) {
                         tutorInfo.style.display = 'block';
                         tutorName.textContent = `${data.tutor.nome} ${data.tutor.cognome}`;
-                        mensilitaRows.innerHTML = data.mensilita
-                            .map(row => `
-                                <tr>
-                                    <td>${row.mese}</td>
-                                    <td class="${row.stato === 1 ? 'pagato' : 'non-pagato'}">€${row.paga}</td>
-                                    <td>${row.ore_singole}</td>
-                                    <td>${row.ore_gruppo}</td>
-                                    <td>${row.data_pagamento || '-'}</td>
-									<td>${row.note || '-'}</td>
-                                    <td>
-                                        ${row.stato === 1 ? '<button class="reset-btn" data-id="' + row.id + '">Reset</button>' : '<button class="paga-btn" data-id="' + row.id + '" data-paga="' + row.paga + '">Paga</button>'}
-                                    </td>
-                                </tr>
-                            `)
-                            .join('');
+                       mensilitaRows.innerHTML = data.mensilita
+    .map(row => `
+        <tr>
+            <td>${row.mese}</td>
+            <td>
+                <span class="paga-badge ${row.stato === 1 ? 'pagato' : 'non-pagato'}">
+                    €${row.paga}
+                </span>
+            </td>
+            <td>${row.ore_singole}</td>
+            <td>${row.ore_gruppo}</td>
+            <td>${row.stato === 1 && row.data_pagamento ? row.data_pagamento : '-'}</td>
+            <td>${row.note ? row.note.replace(/\n/g, '<br>') : '-'}</td>
+            <td>
+                ${row.stato === 1
+                    ? '<button class="reset-btn" data-id="' + row.id + '">Reset</button>'
+                    : '<button class="paga-btn" data-id="' + row.id + '" data-paga="' + row.paga + '">Paga</button>'
+                }
+            </td>
+        </tr>
+    `).join('');
 
                         // Aggiungi listener ai bottoni "Paga" e "Reset"
                         addListenersToButtons();
@@ -159,22 +340,31 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        document.querySelectorAll('.reset-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const mensilitaId = button.dataset.id;
-
-                fetch(`scripts/reset_payment.php?id=${mensilitaId}`, { method: 'POST' })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Pagamento reimpostato.');
-                            location.reload(); // Ricarica la pagina per aggiornare i dati
-                        } else {
-                            alert('Errore durante il reset del pagamento.');
-                        }
-                    });
-            });
-        });
+  	//bottone reset
+	document.body.addEventListener('click', function(e) {
+    if (e.target.classList.contains('reset-btn')) {
+        const id = e.target.getAttribute('data-id');
+        if (confirm('Vuoi davvero resettare lo stato di pagamento per questa mensilità?')) {
+            // Solo se l'utente conferma, parte il reset AJAX
+            fetch('scripts/reset_pagamento_tutor.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'id=' + encodeURIComponent(id)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Reset effettuato!');
+                    location.reload();
+                } else {
+                    alert('Errore: ' + (data.message || 'Impossibile effettuare il reset.'));
+                }
+            })
+            .catch(() => alert('Errore di rete.'));
+        }
+        // Se l'utente clicca "Annulla", non succede nulla
+    }
+});
     };
 
     // Chiudi il modale paga
@@ -208,6 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         chiudiModalePaga();
     });
+
 });
 </script>
 </html>

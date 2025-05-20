@@ -165,45 +165,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const lessonForm = document.getElementById('lesson-form');
     const lessonDateInput = document.getElementById('lesson-date');
     const tutorSelect = document.getElementById('tutor-select');
+	
+lessonForm.addEventListener('submit', function(event) {
+    event.preventDefault(); // Blocca l'invio di default
 
-    lessonForm.addEventListener('submit', (event) => {
-        const selectedDate = lessonDateInput.value;
-        const selectedTutor = tutorSelect.value;
+    const selectedDate = lessonDateInput.value;
+    const selectedTutor = tutorSelect.value;
 
-        if (!selectedDate || !selectedTutor) {
-            alert('Seleziona una data e un tutor.');
-            event.preventDefault();
-            return;
-        }
+    if (!selectedDate || !selectedTutor) {
+        alert('Seleziona una data e un tutor.');
+        return;
+    }
 
-        // Effettua una richiesta AJAX per verificare se il tutor ha già una lezione registrata
-        fetch(`../scripts/check_tutor_availability.php?tutor_id=${selectedTutor}&date=${selectedDate}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.hasLesson) {
-                    // Mostra il messaggio di conferma
-                    const confirmMessage = `${data.tutorName} ha già una lezione registrata il ${data.date}. Sei sicuro di voler aggiungere un'altra lezione?`;
-                    const confirmed = confirm(confirmMessage);
+    const lessonMonth = selectedDate.slice(0, 7); // YYYY-MM
+    fetch(`../scripts/check_pagamento_tutor.php?tutor_id=${selectedTutor}&mese=${lessonMonth}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.pagato) {
+                alert('ATTENZIONE: Il tutor risulta già PAGATO per questo mese. Non puoi inserire altre lezioni.');
+                return;
+            } else {
+                fetch(`../scripts/check_tutor_availability.php?tutor_id=${selectedTutor}&date=${selectedDate}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.hasLesson) {
+                            const confirmMessage = `${data.tutorName} ha già una lezione registrata il ${data.date}. Sei sicuro di voler aggiungere un'altra lezione?`;
+                            const confirmed = confirm(confirmMessage);
 
-                    if (!confirmed) {
-                        // Blocca l'invio del modulo
-                        event.preventDefault();
-                        return;
-                    }
-                }
-
-                // Se confermato o il tutor non ha lezioni, invia il modulo
-                lessonForm.submit();
-            })
-            .catch(error => {
-                console.error('Errore durante il controllo della disponibilità del tutor:', error);
-                alert('Si è verificato un errore durante il controllo della disponibilità del tutor.');
-                event.preventDefault();
-            });
-
-        // Impedisce l'invio immediato del modulo finché non viene completata la verifica
-        event.preventDefault();
-    });
+                            if (!confirmed) {
+                                return;
+                            }
+                        }
+                        lessonForm.submit();
+                    })
+                    .catch(error => {
+                        console.error('Errore durante il controllo della disponibilità del tutor:', error);
+                        alert('Si è verificato un errore durante il controllo della disponibilità del tutor.');
+                    });
+            }
+        })
+        .catch(error => {
+            console.error('Errore durante il controllo del pagamento:', error);
+            alert('Si è verificato un errore durante il controllo del pagamento.');
+        });
+});
 });
 
     // Script per il modale "Aggiungi Tutor"

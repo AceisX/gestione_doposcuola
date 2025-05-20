@@ -56,11 +56,8 @@ $result = $conn->query($sql);
   <link href="assets/fontawesome/css/sharp-duotone-thin.css" rel="stylesheet" />
 </head>
 <body>
-    <header>
-		<img src="img/logo.png" alt="Your Logo" height="75px" style="padding-left: 20px;" />
-        <h1>Gestione Doposcuola</h1>
-        <a href="scripts/logout.php">Logout</a>
-    </header>
+    <?php include __DIR__ . '/assets/header.html'; ?>   
+
     <main class="container">
 	<div style="text-align:center;">
         <h2>Benvenuto, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>

@@ -1,6 +1,16 @@
 <?php
 require_once '../config.php';
 
+// Inizializziamo la sessione
+session_start();
+
+// Verifichiamo se l'utente è loggato
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header('Location: pages/login.php');
+    exit;
+}
+
+
 // Ottieni i tutor dal database
 $tutors = [];
 $sql = "SELECT id, CONCAT(nome, ' ', cognome) AS nome_completo, email, telefono FROM tutor ORDER BY nome ASC";
@@ -56,11 +66,7 @@ $slots_mapping = [
 <button id="add-lesson-fixed-btn" class="fixed-btn">+</button>
 
 
-   	<header>
-		<img src="../img/logo.png" alt="Your Logo" height="75px" style="padding-left: 20px;" />
-        <h1>Gestione Tutor e Lezioni</h1>
-        <a href="scripts/logout.php">Logout</a>
-    </header>
+	<?php include __DIR__ . '/../assets/header.html'; ?>
     <div class="container">
 
         <!-- Sezione superiore -->
