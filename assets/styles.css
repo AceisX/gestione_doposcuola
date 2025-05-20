@@ -525,3 +525,158 @@ th.desc::after {
     font-size: 14px;
     color: #666;
 }
+
+/* CSS pagamenti tutor*/
+
+.paga-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 1.08em;
+    letter-spacing: .5px;
+}
+.paga-badge.pagato {
+    background: #24b47e;
+    color: #fff;
+}
+.paga-badge.non-pagato {
+    background: #e74c3c;
+    color: #fff;
+}
+.mensilita-table th, .mensilita-table td {
+    text-align: center;
+    padding: 10px 6px;
+}
+.mensilita-table th {
+    background: #f3f3f3;
+    color: #333;
+}
+.mensilita-table tr:nth-child(even) {
+    background: #fafbfc;
+}
+button.paga-btn, button.reset-btn {
+    padding: 4px 13px;
+    border: none;
+    border-radius: 13px;
+    background: #3498db;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 0 3px;
+    transition: background .2s;
+}
+button.paga-btn:hover {
+    background: #217dbb;
+}
+button.reset-btn {
+    background: #f39c12;
+}
+button.reset-btn:hover {
+    background: #d35400;
+}
+
+
+/* HEADER MODERNO E SPAZIOSO */
+.main-header {
+    background-color: #007bff;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 36px;
+    height: 90px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    letter-spacing: 0.01em;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-logo {
+    height: 65px;
+    transition: filter 0.2s;
+    margin-right: 8px;
+}
+
+.logo-link:hover .header-logo {
+    filter: brightness(0.92);
+}
+
+.header-title {
+    font-size: 1.15em;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding-top: 4px;
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 6px;
+    transition: background 0.13s, color 0.13s, box-shadow 0.13s;
+    display: inline-block;
+    margin-left: 0;
+}
+
+.nav-link:hover, .nav-link:focus {
+    background: #28a745;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.07);
+    text-decoration: none;
+}
+
+.nav-link.active {
+    background: #fff;
+    color: #007bff !important;
+    font-weight: bold;
+}
+
+.nav-logout {
+    background: #e74c3c;
+    color: #fff !important;
+    margin-left: 16px;
+}
+
+.nav-logout:hover, .nav-logout:focus {
+    background: #c0392b;
+    color: #fff !important;
+}
+
+/* Responsive header */
+@media (max-width: 700px) {
+    .main-header {
+        flex-direction: column;
+        height: auto;
+        padding: 15px 10px 8px 10px;
+        gap: 10px;
+    }
+    .header-left {
+        gap: 10px;
+    }
+    .header-title {
+        font-size: 1em;
+    }
+    .header-nav {
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 7px;
+    }
+    .nav-link {
+        font-size: 0.97em;
+        padding: 7px 12px;
+        margin-left: 0;
+    }
+}
