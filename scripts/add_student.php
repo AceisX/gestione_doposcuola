@@ -2,6 +2,11 @@
 // Includiamo il file di configurazione
 require_once '../config.php';
 
+// Avvia la sessione se non è già avviata (per usare $_SESSION['user_id'])
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Verifica che la richiesta sia POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recupera i dati dal form
@@ -61,7 +66,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         $stmt_alunno->bind_param("sssidsi", $nome, $cognome, $scuola, $id_pacchetto, $prezzo_finale, $data_iscrizione, $id_genitore);
         $stmt_alunno->execute();
+        $id_alunno = $stmt_alunno->insert_id;
         $stmt_alunno->close();
+
+        // REGISTRAZIONE AUTOMATICA NELLO STORICO
+        $id_utente = isset($_SESSION['id']) ? $_SESSION['id'] : null;
+        $sql_storico = "INSERT INTO storico_modifiche (id_alunno, id_utente, campo_modificato, valore_precedente, valore_nuovo, dettagli)
+                        VALUES (?, ?, ?, ?, ?, ?)";
+        // Pacchetto
+        $campo = 'pacchetto';
+        $valore_precedente = null;
+        $valore_nuovo = $id_pacchetto;
+        $dettagli = "Nuovo alunno inserito";
+        $stmt_storico = $conn->prepare($sql_storico);
+        $stmt_storico->bind_param("iissss", $id_alunno, $id_utente, $campo, $valore_precedente, $valore_nuovo, $dettagli);
+        $stmt_storico->execute();
+        // Prezzo
+        $campo = 'prezzo_finale';
+        $valore_nuovo = $prezzo_finale;
+        $stmt_storico->bind_param("iissss", $id_alunno, $id_utente, $campo, $valore_precedente, $valore_nuovo, $dettagli);
+        $stmt_storico->execute();
+        // Stato
+        $campo = 'stato';
+        $valore_nuovo = 'attivo';
+        $stmt_storico->bind_param("iissss", $id_alunno, $id_utente, $campo, $valore_precedente, $valore_nuovo, $dettagli);
+        $stmt_storico->execute();
+        $stmt_storico->close();
 
         // Commit della transazione
         $conn->commit();

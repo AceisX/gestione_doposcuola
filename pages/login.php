@@ -6,7 +6,7 @@ require_once '../config.php';
 session_start();
 
 // Verifichiamo se l'utente è già loggato
-if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
+if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {	
     // Se l'utente è già loggato, reindirizziamolo alla homepage
     header('Location: ../index.php');
     exit;
