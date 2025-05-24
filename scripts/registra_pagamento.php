@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Estrai i dati dal POST
     $alunnoId = intval($_POST['alunno_id'] ?? 0);
+	$idPacchetto = intval($_POST['id_pacchetto'] ?? 0);
     $dataPagamento = $_POST['data_pagamento'] ?? '';
     $metodoPagamento = $_POST['metodo_pagamento'] ?? '';
     $totalePagato = floatval($_POST['totale_pagato'] ?? 0);
@@ -21,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Query SQL
-    $sql = "INSERT INTO pagamenti (id_alunno, data_pagamento, metodo_pagamento, totale_pagato, tipologia, mese_pagato, ore_effettuate) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO pagamenti (id_alunno, id_pacchetto, data_pagamento, metodo_pagamento, totale_pagato, tipologia, mese_pagato, ore_effettuate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
     // Controlla errori nella preparazione della query
@@ -35,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Associa i parametri
-    $stmt->bind_param("issdssd", $alunnoId, $dataPagamento, $metodoPagamento, $totalePagato, $tipologia, $mesePacchetto, $oreEffettuate);
+    $stmt->bind_param("iissdssd", $alunnoId, $idPacchetto, $dataPagamento, $metodoPagamento, $totalePagato, $tipologia, $mesePacchetto, $oreEffettuate);
 
     // Esegui la query
     if ($stmt->execute()) {
