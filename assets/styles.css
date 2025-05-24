@@ -233,6 +233,233 @@ th.desc::after {
     color: #007bff;
 }
 
+/* Controlli della tabella */
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Barra di ricerca */
+.search-bar {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+.search-bar i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+/* Filtri  index*/
+.filters {
+    display: flex;
+    gap: 15px;
+}
+
+.filters select {
+    padding: 8px 35px 8px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    font-size: 14px;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%23666' d='M0 2l4 4 4-4z'/%3E%3C/svg%3E") no-repeat right 15px center;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    min-width: 150px;
+}
+
+.filters select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+/* Responsive index */
+@media (max-width: 768px) {
+    .table-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .search-bar {
+        width: 100%;
+        max-width: none;
+    }
+
+    .filters {
+        width: 100%;
+    }
+
+    .filters select {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.dashboard-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.dashboard-card i {
+    font-size: 2em;
+    color: #007bff;
+    background: rgba(0,123,255,0.1);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.card-content h4 {
+    margin: 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.card-value {
+    margin: 5px 0 0;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Controlli Vista */
+.view-controls {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.view-btn {
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    background: #007bff;  /* Colore di default blu */
+    color: #fff;         /* Testo bianco */
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.view-btn:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+}
+
+.view-btn.active {
+    background: #28a745;  /* Verde quando attivo */
+    color: #fff;
+    border-color: #28a745;
+}order-color: #007bff;
+}
+
+/* Tabella Pagamenti 2 */
+/* Tabella Pagamenti */
+.payments-table-wrapper {
+    position: relative;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.payments-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+.payments-table th,
+.payments-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+    min-width: 100px;
+    max-width: 120px;
+    white-space: nowrap;
+}
+
+.payments-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.fixed-column {
+    position: sticky;
+    left: 0;
+    background-color: #fff;
+    z-index: 1;
+    border-right: 2px solid #007bff;
+    text-align: left;
+    min-width: 200px;
+}
+
+th.fixed-column {
+    z-index: 3;
+    background-color: #f8f9fa;
+}
+
+.payments-table tbody tr:hover {
+    background-color: rgba(0,123,255,0.05);
+}
+
+.paid-full {
+    background-color: #d4edda !important;
+}
+
+.paid-partial {
+    background-color: #fff3cd !important;
+}
+
+/* Contenitore con scroll orizzontale */
+#paymentsView {
+    overflow-x: auto;
+    max-width: 100%;
+    margin-top: 20px;
+}
+/* Tabella Pagamenti 2 FINE */
 /* Stile per lo stato */
 .status {
     font-size: 1.2rem;
@@ -679,4 +906,49 @@ button.reset-btn:hover {
         padding: 7px 12px;
         margin-left: 0;
     }
+}
+
+/* Stili specifici per la tabella dei pagamenti */
+.payment-cell {
+    cursor: pointer;
+}
+
+.payment-cell:hover {
+    background-color: #f5f5f5;
+}
+
+.paid-full {
+    background-color: #d4edda;
+}
+
+.paid-partial {
+    background-color: #fff3cd;
+}
+
+/* Usa gli stili della info-table esistente */
+#payment-details-content {
+    margin-top: 20px;
+}
+
+#payment-details-content .payment-detail-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#payment-details-content .payment-detail-item button {
+    padding: 5px 10px;
+    background-color: #d9534f;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#payment-details-content .payment-detail-item button:hover {
+    background-color: #c9302c;
 }
