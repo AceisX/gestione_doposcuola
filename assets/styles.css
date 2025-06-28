@@ -1,10 +1,12 @@
-/* Stile Globale */
+/* Stile Globale Moderno */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #2d3748;
+    line-height: 1.6;
+    min-height: 100vh;
 }
 
 a {
@@ -21,12 +23,33 @@ h1, h2, h3 {
     padding: 10px 0;
 }
 
-/* Contenitore Centrale */
+/* Contenitore Centrale Moderno */
 .container {
     width: 95%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 30px 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Titolo di benvenuto */
+.container h2 {
+    font-size: 2.2em;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 30px;
+    text-align: center;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 /* Header */
@@ -43,48 +66,122 @@ header a {
     font-size: 14px;
 }
 
-/* Stile per il Login */
+/* Stile per il Login Moderno */
 .login-container {
-    width: 100%;
-    max-width: 400px;
-    margin: 100px auto;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 20px;
-    background: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px 35px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 
+                0 10px 20px rgba(0, 0, 0, 0.05);
     text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.login-container h1 {
+.login-card h1 {
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3748;
+    letter-spacing: -0.5px;
+}
+
+.login-card .form-group {
     margin-bottom: 20px;
-    font-size: 24px;
-    color: #333;
-}
-
-.form-group {
-    margin-bottom: 15px;
     text-align: left;
 }
 
-.form-group label {
+.login-card .form-group label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.form-group button {
+.login-card .form-group input {
     width: 100%;
-    padding: 10px;
+    padding: 15px 18px;
     font-size: 16px;
-    background-color: #007bff;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.login-card .form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 10px;
 }
 
-.form-group button:hover {
-    background-color: #0056b3;
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.error-message {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    font-weight: 500;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Responsive per login */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 30px 25px;
+        margin: 10px;
+    }
+    
+    .login-card h1 {
+        font-size: 24px;
+    }
 }
 
 /* Messaggi di Errore */
@@ -145,42 +242,228 @@ option {
     font-size: 16px;
 }
 
-/* Stile per la Modale */
+/* MODALI ULTRA MODERNI */
 .modal {
     display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
+    background: rgba(45, 55, 72, 0.8);
+    backdrop-filter: blur(12px);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(12px);
+    }
 }
 
 .modal-content {
-    background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 700px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    margin: 3% auto;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    width: 95%;
+    max-width: 900px;
+    overflow: hidden;
+    animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .close-btn {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+    color: #a0aec0;
+    position: absolute;
+    right: 25px;
+    top: 20px;
+    font-size: 24px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.3s ease;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(160, 174, 192, 0.1);
+    z-index: 10;
 }
 
 .close-btn:hover,
 .close-btn:focus {
-    color: #000;
-    text-decoration: none;
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+    transform: scale(1.1);
+}
+
+.modal-content h2, 
+.modal-content h3 {
+    margin: 0 0 30px 0;
+    padding: 40px 40px 0 40px;
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #2d3748;
+    letter-spacing: -0.5px;
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.modal-content form {
+    padding: 0 40px 40px 40px;
+}
+
+.modal-grid {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.modal-column {
+    flex: 1 1 0;
+    background: #f7fafd;
+    border: 1.5px solid #e3e8ee;
+    border-radius: 12px;
+    padding: 22px 18px 16px 18px;
+    min-width: 240px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+.modal-column h4 {
+    margin-bottom: 14px;
+    font-size: 1.08em;
+    font-weight: 600;
+    color: #007bff;
+    border-bottom: 1px solid #e3e8ee;
+    padding-bottom: 5px;
+    letter-spacing: 0.01em;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #22223b;
+    font-size: 1em;
+    letter-spacing: 0.01em;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px 13px;
+    font-size: 1em;
+    border: 1.5px solid #dbeafe;
+    border-radius: 7px;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-top: 2px;
+    color: #22223b;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.08);
+}
+
+.form-group input[type="radio"] {
+    width: auto;
+    margin-right: 7px;
+}
+
+.form-group .input-with-icon {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.form-group .input-with-icon input {
+    padding-right: 32px;
+}
+
+.form-group .input-with-icon i {
+    position: absolute;
+    right: 10px;
+    color: #007bff;
+    font-size: 1.1em;
+}
+
+.form-submit {
+    text-align: center;
+    margin-top: 22px;
+}
+
+.form-submit button {
+    padding: 11px 28px;
+    font-size: 1.08em;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,123,255,0.07);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.form-submit button:hover {
+    background:  #007bff;
+    box-shadow: 0 4px 16px rgba(0,123,255,0.13);
+}
+
+/* Responsive per modali */
+@media (max-width: 900px) {
+    .modal-content {
+        max-width: 98vw;
+        padding: 0;
+    }
+    .modal-grid {
+        flex-direction: column;
+        gap: 14px;
+    }
+    .modal-column {
+        min-width: 0;
+        padding: 16px 10px;
+    }
+    .modal-content h2, .modal-content h3 {
+        padding: 18px 12px 0 12px;
+    }
+    .modal-content form {
+        padding: 0 12px 18px 12px;
+    }
 }
 
 /* Stile per i campi di input e form-group */
@@ -194,22 +477,159 @@ option {
     margin-right: 10px;
 }
 
-/* Stile per la tabella */
+/* Stile per la tabella principale moderna */
 .alunni-table {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 25px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .alunni-table th, .alunni-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
+    border: none;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    padding: 16px 20px;
+    text-align: left;
+    transition: all 0.3s ease;
 }
 
 .alunni-table th {
-    background-color: #f4f4f4;
-    font-weight: bold;
+    background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.8px;
+    color: #2d3748;
+    position: relative;
+}
+
+.alunni-table th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.alunni-table th:hover::after {
+    opacity: 1;
+}
+
+.alunni-table tbody tr {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    position: relative;
+}
+
+.alunni-table tbody tr:hover {
+    background: linear-gradient(135deg, rgba(102,126,234,0.05), rgba(118,75,162,0.05));
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+}
+
+.alunni-table td {
+    color: #4a5568;
+    font-size: 0.95em;
+    font-weight: 500;
+}
+
+/* Stile per lo stato attivo/inattivo */
+.status {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status.active {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    box-shadow: 0 0 12px rgba(72, 187, 120, 0.4);
+}
+
+.status.inactive {
+    background: linear-gradient(135deg, #f56565, #e53e3e);
+    box-shadow: 0 0 12px rgba(245, 101, 101, 0.4);
+}
+
+/* Stile per i bottoni delle azioni moderni */
+.alunni-table td button {
+    padding: 10px 12px;
+    margin: 0 4px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    min-width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alunni-table td button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.alunni-table td button:hover::before {
+    opacity: 1;
+}
+
+.alunni-table .info-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.alunni-table .edit-btn {
+    background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(246, 173, 85, 0.3);
+}
+
+.alunni-table .pagamento-btn {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+}
+
+.alunni-table .delete-btn {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(245, 101, 101, 0.3);
+}
+
+.alunni-table button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.alunni-table button:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+/* Stili specifici per le icone nei pulsanti */
+.alunni-table button i {
+    font-size: 1.1em;
+    pointer-events: none;
 }
 
 th {
@@ -233,19 +653,26 @@ th.desc::after {
     color: #007bff;
 }
 
-/* Controlli della tabella */
+/* Controlli della tabella moderni */
 .table-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 20px 0;
-    padding: 15px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
 }
 
-/* Barra di ricerca */
+.table-controls:hover {
+    box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+}
+
+/* Barra di ricerca moderna */
 .search-bar {
     position: relative;
     flex: 1;
@@ -254,49 +681,57 @@ th.desc::after {
 
 .search-bar input {
     width: 100%;
-    padding: 10px 40px 10px 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 20px;
+    padding: 12px 45px 12px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 25px;
     font-size: 14px;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 .search-bar input:focus {
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
 }
 
 .search-bar i {
     position: absolute;
-    right: 15px;
+    right: 18px;
     top: 50%;
     transform: translateY(-50%);
-    color: #666;
+    color: #667eea;
+    font-size: 16px;
 }
 
-/* Filtri  index*/
+/* Filtri moderni */
 .filters {
     display: flex;
     gap: 15px;
 }
 
 .filters select {
-    padding: 8px 35px 8px 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 20px;
+    padding: 12px 40px 12px 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 25px;
     font-size: 14px;
-    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%23666' d='M0 2l4 4 4-4z'/%3E%3C/svg%3E") no-repeat right 15px center;
+    background: rgba(255, 255, 255, 0.9);
     appearance: none;
     cursor: pointer;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    min-width: 150px;
+    transition: all 0.3s ease;
+    min-width: 160px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M2 4l4 4 4-4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
 }
 
 .filters select:focus {
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
 }
 
 /* Responsive index */
@@ -321,157 +756,415 @@ th.desc::after {
     }
 }
 
-/* Dashboard Cards */
+/* Dashboard Cards Moderni */
 .dashboard-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin: 35px 0;
+    padding: 0 10px;
 }
 
 .dashboard-card {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.06), 
+                0 10px 20px rgba(0,0,0,0.04);
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 25px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255,255,255,0.7);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.12));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.12), 
+                0 15px 30px rgba(0,0,0,0.08);
+}
+
+.dashboard-card:hover::before {
+    opacity: 1;
 }
 
 .dashboard-card i {
-    font-size: 2em;
-    color: #007bff;
-    background: rgba(0,123,255,0.1);
-    padding: 15px;
-    border-radius: 10px;
+    font-size: 2.5em;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+}
+
+.dashboard-card:hover i {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.card-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
 }
 
 .card-content h4 {
     margin: 0;
-    color: #666;
-    font-size: 0.9em;
+    color: #2d3748;
+    font-size: 1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
 }
 
 .card-value {
-    margin: 5px 0 0;
-    font-size: 1.8em;
-    font-weight: bold;
-    color: #333;
+    margin: 0;
+    font-size: 2.4em;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
 }
 
-/* Controlli Vista */
+/* Custom colors for each card */
+.dashboard-card:nth-child(1) i {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.dashboard-card:nth-child(2) i {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+}
+
+.dashboard-card:nth-child(3) i {
+    background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+}
+
+.dashboard-card:nth-child(4) i {
+    background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
+}
+
+@media (max-width: 768px) {
+    .dashboard-cards {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        padding: 0 5px;
+    }
+
+    .dashboard-card {
+        padding: 20px;
+    }
+
+    .dashboard-card i {
+        width: 60px;
+        height: 60px;
+        font-size: 2em;
+    }
+
+    .card-value {
+        font-size: 2em;
+    }
+}
+
+/* Controlli Vista Moderni */
 .view-controls {
-    margin-bottom: 20px;
+    margin: 25px 0;
     display: flex;
-    gap: 10px;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px;
+}
+
+/* Pulsanti di azione principali */
+.actions {
+    display: flex;
+    gap: 15px;
+    margin: 25px 0;
+    justify-content: flex-end;
+}
+
+#add-student-btn,
+#generate-report-btn {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+#add-student-btn::before,
+#generate-report-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#add-student-btn:hover::before,
+#generate-report-btn:hover::before {
+    opacity: 1;
+}
+
+#add-student-btn:hover,
+#generate-report-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+#add-student-btn:active,
+#generate-report-btn:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+#add-student-btn i,
+#generate-report-btn i {
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+}
+
+#add-student-btn:hover i,
+#generate-report-btn:hover i {
+    transform: scale(1.1);
+}
+
+#generate-report-btn {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+}
+
+#generate-report-btn:hover {
+    box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
 }
 
 .view-btn {
-    padding: 8px 15px;
-    border: 1px solid #ddd;
-    background: #007bff;  /* Colore di default blu */
-    color: #fff;         /* Testo bianco */
-    border-radius: 5px;
+    padding: 12px 20px;
+    border: none;
+    background: transparent;
+    color: #4a5568;
+    border-radius: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 5px;
-    transition: all 0.3s ease;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 0.95em;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.view-btn i {
+    font-size: 1.1em;
+    transition: transform 0.3s ease;
 }
 
 .view-btn:hover {
-    background: #0056b3;
-    border-color: #0056b3;
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.08);
+}
+
+.view-btn:hover i {
+    transform: scale(1.1);
 }
 
 .view-btn.active {
-    background: #28a745;  /* Verde quando attivo */
-    color: #fff;
-    border-color: #28a745;
-}order-color: #007bff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.view-btn.active i {
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .view-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .view-btn {
+        padding: 10px 16px;
+        font-size: 0.9em;
+    }
 }
 
 /* Tabella Pagamenti 2 */
-/* Tabella Pagamenti */
+/* Tabella Pagamenti Migliorata */
 .payments-table-wrapper {
     position: relative;
-    margin-top: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    margin-top: 25px;
+    border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .payments-table {
     width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9em;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.95em;
+    background: transparent;
 }
 
 .payments-table th,
 .payments-table td {
-    padding: 8px;
-    border: 1px solid #ddd;
+    padding: 16px 20px;
+    border: none;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
     text-align: center;
-    min-width: 100px;
-    max-width: 120px;
+    min-width: 120px;
+    max-width: 150px;
     white-space: nowrap;
+    transition: all 0.3s ease;
 }
 
 .payments-table th {
-    background-color: #f8f9fa;
-    font-weight: bold;
+    background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));
+    font-weight: 600;
     position: sticky;
     top: 0;
     z-index: 2;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.8px;
+    color: #2d3748;
 }
 
 .fixed-column {
     position: sticky;
     left: 0;
-    background-color: #fff;
+    background: rgba(255, 255, 255, 0.95);
     z-index: 1;
-    border-right: 2px solid #007bff;
+    border-right: 2px solid rgba(226, 232, 240, 0.8);
     text-align: left;
-    min-width: 200px;
+    min-width: 220px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    backdrop-filter: blur(10px);
 }
 
 th.fixed-column {
     z-index: 3;
-    background-color: #f8f9fa;
+    background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));
+}
+
+.payments-table tbody tr {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    position: relative;
 }
 
 .payments-table tbody tr:hover {
-    background-color: rgba(0,123,255,0.05);
+    background: linear-gradient(135deg, rgba(102,126,234,0.05), rgba(118,75,162,0.05));
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+}
+
+.payments-table tbody tr:hover .fixed-column {
+    background: linear-gradient(135deg, rgba(102,126,234,0.05), rgba(118,75,162,0.05));
 }
 
 .paid-full {
-    background-color: #d4edda !important;
+    background: linear-gradient(135deg, rgba(72, 187, 120, 0.15), rgba(56, 161, 105, 0.15)) !important;
+    font-weight: 500;
+    box-shadow: inset 0 0 12px rgba(72, 187, 120, 0.1);
 }
 
 .paid-partial {
-    background-color: #fff3cd !important;
+    background: linear-gradient(135deg, rgba(246, 173, 85, 0.15), rgba(237, 137, 54, 0.15)) !important;
+    font-weight: 500;
+    box-shadow: inset 0 0 12px rgba(246, 173, 85, 0.1);
 }
 
-/* Contenitore con scroll orizzontale */
+/* Miglioramento scroll orizzontale */
 #paymentsView {
     overflow-x: auto;
     max-width: 100%;
     margin-top: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #667eea #f0f0f0;
+    padding: 5px;
 }
+
+#paymentsView::-webkit-scrollbar {
+    height: 10px;
+}
+
+#paymentsView::-webkit-scrollbar-track {
+    background: rgba(240, 240, 240, 0.8);
+    border-radius: 5px;
+    margin: 0 10px;
+}
+
+#paymentsView::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 5px;
+    border: 2px solid rgba(240, 240, 240, 0.8);
+}
+
+#paymentsView::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5a6eea 0%, #6a3d9c 100%);
+}
+
 /* Tabella Pagamenti 2 FINE */
 /* Stile per lo stato */
 .status {
     font-size: 1.2rem;
-    font-weight: bold;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    user-select: none;
 }
 
 .status.active {
-    color: green;
+    color: #28a745;
+    text-shadow: 0 0 5px rgba(40, 167, 69, 0.6);
 }
 
 .status.inactive {
-    color: red;
+    color: #dc3545;
+    text-shadow: 0 0 5px rgba(220, 53, 69, 0.6);
 }
 
 /* Modale Info: Struttura a Colonne */
@@ -488,6 +1181,8 @@ th.fixed-column {
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 15px;
+    margin-right: 20px;
+    margin-left: 20px;
 }
 
 .info-column h3 {
@@ -539,43 +1234,141 @@ th.fixed-column {
 .modal-grid {
     display: flex;
     justify-content: space-between;
-    gap: 20px; /* Spazio tra le colonne */
-    margin-bottom: 20px;
+    gap: 30px;
+    margin: 0 0 30px 0;
 }
 
 .modal-column {
-    flex: 1; /* Occupa spazio in maniera uniforme */
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
+    flex: 1;
+    background: rgba(247, 250, 252, 0.8);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 16px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+}
+
+.modal-column:hover {
+    background: rgba(247, 250, 252, 0.95);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
 }
 
 .modal-column h4 {
-    margin-bottom: 15px;
-    font-size: 18px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #2d3748;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-/* Stile per il pulsante di invio */
-.form-submit {
-    text-align: center;
-    margin-top: 20px;
+/* Form Groups moderni dentro i modali */
+.modal-content .form-group {
+    margin-bottom: 20px;
 }
 
-.form-submit button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
+.modal-content .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #4a5568;
+    font-size: 0.95em;
+    transition: color 0.3s ease;
+}
+
+.modal-content .form-group:focus-within label {
+    color: #667eea;
+}
+
+.modal-content .form-group input:not([type="radio"]),
+.modal-content .form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 0.95em;
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    color: #2d3748;
+    box-sizing: border-box;
+}
+
+.modal-content .form-group input:focus,
+.modal-content .form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+}
+
+.modal-content .form-group input::placeholder {
+    color: #a0aec0;
+}
+
+/* Radio buttons moderni */
+.modal-content .form-group div {
+    display: flex;
+    gap: 20px;
+    margin-top: 5px;
+}
+
+.modal-content .form-group div label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background: rgba(247, 250, 252, 0.8);
+    border: 2px solid rgba(226, 232, 240, 0.8);
+    margin-bottom: 0;
+}
+
+.modal-content .form-group div label:hover {
+    background: rgba(102, 126, 234, 0.05);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.modal-content .form-group div input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
     cursor: pointer;
 }
 
+/* Stile per il pulsante di invio moderno */
+.form-submit {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.form-submit button {
+    padding: 12px 30px;
+    font-size: 1em;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
 .form-submit button:hover {
-    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.form-submit button:active {
+    transform: translateY(-1px);
 }
 
 /* Stile per l'input con icona */
@@ -625,6 +1418,7 @@ th.fixed-column {
     font-size: 24px;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1;
 }
 
 .fixed-btn:hover {
@@ -911,19 +1705,15 @@ button.reset-btn:hover {
 /* Stili specifici per la tabella dei pagamenti */
 .payment-cell {
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .payment-cell:hover {
-    background-color: #f5f5f5;
+    background-color: #e9f5ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,123,255,0.15);
 }
 
-.paid-full {
-    background-color: #d4edda;
-}
-
-.paid-partial {
-    background-color: #fff3cd;
-}
 
 /* Usa gli stili della info-table esistente */
 #payment-details-content {
@@ -951,4 +1741,165 @@ button.reset-btn:hover {
 
 #payment-details-content .payment-detail-item button:hover {
     background-color: #c9302c;
+}
+
+/* CARD PAGAMENTO ORIZZONTALE PER MODALI */
+.payment-detail-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    background: #f9f9fb;
+    border: 2px solid #e0e3ea;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(30,41,59,0.06);
+    padding: 18px 24px;
+    margin: 18px 18px 18px 18px;
+    transition: box-shadow 0.18s;
+}
+
+.payment-detail-card:last-child {
+    margin-bottom: 20px;
+}
+
+.payment-detail-card:hover {
+    box-shadow: 0 4px 18px rgba(30,41,59,0.12);
+    border-color: #d1d5db;
+}
+
+.payment-detail-card .payment-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1 1 0;
+}
+
+.payment-detail-card .payment-amount {
+    font-size: 1.13em;
+    font-weight: 600;
+    color: #222;
+    letter-spacing: 0.01em;
+}
+
+.payment-detail-card .payment-date,
+.payment-detail-card .payment-method,
+.payment-detail-card .payment-type {
+    font-size: 0.98em;
+    color: #666;
+    font-weight: 400;
+}
+
+.payment-detail-card .payment-type {
+    font-style: italic;
+}
+
+.payment-detail-card .delete-btn {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 8px 16px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 4px rgba(231,76,60,0.10);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.payment-detail-card .delete-btn:hover {
+    background: #c0392b;
+    box-shadow: 0 2px 8px rgba(231,76,60,0.18);
+}
+
+/* Migliora il contenitore delle card */
+#payment-details-content,
+#info-content .payments-section {
+    padding: 10px 0 0 0;
+}
+
+/* Responsive per le card pagamento */
+@media (max-width: 600px) {
+    .payment-detail-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 14px 10px;
+    }
+}
+
+/* Report Table Styles */
+.student-report {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.student-name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    color: #2d3748;
+    font-size: 1.4em;
+}
+
+.total-hours {
+    font-size: 1.2em;
+    color: #4a5568;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 15px;
+}
+
+.report-table th,
+.report-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.report-table th {
+    background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 0.95em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.report-table tr:last-child td {
+    border-bottom: none;
+}
+
+.report-table tbody tr:hover {
+    background: linear-gradient(135deg, rgba(102,126,234,0.05), rgba(118,75,162,0.05));
+}
+
+#report-tutor-modal {
+    z-index: 100005 !important;
+}
+
+.tutor-report-item {
+    padding: 8px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.tutor-report-item:hover {
+    background-color: #f7fafc;
+}
+
+.tutor-report-item input[type="checkbox"] {
+    margin-right: 10px;
 }
