@@ -1,3 +1,139 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Creato il: Giu 25, 2025 alle 13:56
+-- Versione del server: 10.4.32-MariaDB
+-- Versione PHP: 8.0.30
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+--
+-- Database: `gestione_doposcuola`
+--
+
+DELIMITER $$
+--
+-- Procedure
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ricalcola_tutti_pagamenti` ()   BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE v_tutor_id INT;
+    DECLARE v_mese DATE;
+    DECLARE ore_singole INT DEFAULT 0;
+    DECLARE ore_gruppo INT DEFAULT 0;
+    DECLARE mezze_ore_singole INT DEFAULT 0;
+    DECLARE mezze_ore_gruppo INT DEFAULT 0;
+    DECLARE totale_ore_singole INT DEFAULT 0;
+    DECLARE totale_ore_gruppo INT DEFAULT 0;
+    DECLARE totale_paga DECIMAL(10,2) DEFAULT 0.00;
+    
+    -- Cursor per trovare tutte le combinazioni uniche di tutor/mese
+    DECLARE cur CURSOR FOR 
+        SELECT DISTINCT id_tutor, DATE_FORMAT(data, '%Y-%m-01') as mese
+        FROM lezioni
+        ORDER BY id_tutor, mese;
+    
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    OPEN cur;
+    
+    read_loop: LOOP
+        FETCH cur INTO v_tutor_id, v_mese;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        
+        -- Reset variabili per ogni iterazione
+        SET ore_singole = 0;
+        SET mezze_ore_singole = 0;
+        SET ore_gruppo = 0;
+        SET mezze_ore_gruppo = 0;
+        
+        -- Verifica se il pagamento è già stato effettuato
+        IF NOT EXISTS (
+            SELECT 1 FROM pagamenti_tutor 
+            WHERE tutor_id = v_tutor_id 
+              AND mensilita = v_mese
+              AND stato = 1
+        ) THEN
+            -- Calcola ore singole
+            SELECT COUNT(*) INTO ore_singole
+            FROM lezioni
+            WHERE id_tutor = v_tutor_id
+              AND DATE_FORMAT(data, '%Y-%m-01') = v_mese
+              AND tipo = 'singolo'
+              AND durata = 0;
+            
+            -- Calcola mezze ore singole
+            SELECT COUNT(*) INTO mezze_ore_singole
+            FROM lezioni
+            WHERE id_tutor = v_tutor_id
+               AND DATE_FORMAT(data, '%Y-%m-01') = v_mese
+                             AND tipo = 'singolo'
+              AND durata = 1;
+            
+            -- Calcola ore gruppo
+            SELECT COUNT(*) INTO ore_gruppo
+            FROM lezioni
+            WHERE id_tutor = v_tutor_id
+              AND DATE_FORMAT(data, '%Y-%m-01') = v_mese
+              AND tipo = 'gruppo'
+              AND durata = 0;
+            
+            -- Calcola mezze ore gruppo
+            SELECT COUNT(*) INTO mezze_ore_gruppo
+            FROM lezioni
+            WHERE id_tutor = v_tutor_id
+              AND DATE_FORMAT(data, '%Y-%m-01') = v_mese
+              AND tipo = 'gruppo'
+              AND durata = 1;
+            
+            -- Calcolo totale ore con arrotondamento per difetto
+            SET totale_ore_singole = ore_singole + FLOOR(mezze_ore_singole / 2);
+            SET totale_ore_gruppo = ore_gruppo + FLOOR(mezze_ore_gruppo / 2);
+            SET totale_paga = (totale_ore_singole * 5) + (totale_ore_gruppo * 8);
+            
+            -- Inserisci o aggiorna il pagamento
+            INSERT INTO pagamenti_tutor (
+                tutor_id, mensilita, paga, ore_singole, ore_gruppo, 
+                mezze_ore_singole, mezze_ore_gruppo, stato
+            )
+            VALUES (
+                v_tutor_id, 
+                v_mese, 
+                totale_paga, 
+                ore_singole, 
+                ore_gruppo, 
+                mezze_ore_singole, 
+                mezze_ore_gruppo, 
+                0
+            )
+            ON DUPLICATE KEY UPDATE
+                paga = totale_paga,
+                ore_singole = ore_singole,
+                ore_gruppo = ore_gruppo,
+                mezze_ore_singole = mezze_ore_singole,
+                mezze_ore_gruppo = mezze_ore_gruppo,
+                stato = 0;
+        END IF;
+        
+    END LOOP;
+    
+    CLOSE cur;
+    
+END$$
+
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `alunni`
+--
 
 CREATE TABLE `alunni` (
   `id` int(11) NOT NULL,
@@ -11,6 +147,41 @@ CREATE TABLE `alunni` (
   `id_genitore` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `alunni`
+--
+
+TRUNCATE TABLE `alunni`;
+--
+-- Struttura della tabella `categorie_inventario`
+--
+
+CREATE TABLE `categorie_inventario` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Svuota la tabella prima dell'inserimento `categorie_inventario`
+--
+
+TRUNCATE TABLE `categorie_inventario`;
+--
+-- Dump dei dati per la tabella `categorie_inventario`
+--
+
+INSERT IGNORE INTO `categorie_inventario` (`id`, `nome`, `created_at`) VALUES
+(1, 'libri', '2025-06-10 10:59:08'),
+(2, 'cancelleria', '2025-06-10 10:59:08'),
+(3, 'multimediale', '2025-06-10 10:59:08'),
+(4, 'spaccio', '2025-06-10 16:53:05');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `genitori`
+--
 
 CREATE TABLE `genitori` (
   `id` int(11) NOT NULL,
@@ -20,6 +191,41 @@ CREATE TABLE `genitori` (
   `telefono` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `genitori`
+--
+
+TRUNCATE TABLE `genitori`;
+
+
+--
+-- Struttura della tabella `inventario`
+--
+
+CREATE TABLE `inventario` (
+  `id` int(11) NOT NULL,
+  `codice` varchar(50) NOT NULL,
+  `nome` varchar(255) NOT NULL,
+  `categoria` varchar(100) NOT NULL,
+  `quantita` int(11) NOT NULL DEFAULT 0,
+  `ubicazione` varchar(255) DEFAULT NULL,
+  `prezzo` decimal(10,2) DEFAULT NULL,
+  `note` text DEFAULT NULL,
+  `etichette` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Svuota la tabella prima dell'inserimento `inventario`
+--
+
+TRUNCATE TABLE `inventario`;
+--
+
+
+--
+-- Struttura della tabella `lezioni`
+--
 
 CREATE TABLE `lezioni` (
   `id` int(11) NOT NULL,
@@ -30,13 +236,423 @@ CREATE TABLE `lezioni` (
   `tipo` enum('singolo','gruppo') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `lezioni`
+--
 
+TRUNCATE TABLE `lezioni`;
+--
+
+
+--
+-- Trigger `lezioni`
+--
+DELIMITER $$
+CREATE TRIGGER `aggiorna_pagamenti_tutor` AFTER INSERT ON `lezioni` FOR EACH ROW BEGIN
+    DECLARE ore_singole INT DEFAULT 0;
+    DECLARE ore_gruppo INT DEFAULT 0;
+    DECLARE mezze_ore_singole INT DEFAULT 0;
+    DECLARE mezze_ore_gruppo INT DEFAULT 0;
+    DECLARE totale_ore_singole INT DEFAULT 0;
+    DECLARE totale_ore_gruppo INT DEFAULT 0;
+    DECLARE totale_paga DECIMAL(10,2) DEFAULT 0.00;
+
+    -- Aggiorna solo se NON pagato
+    IF NOT EXISTS (
+        SELECT 1 FROM pagamenti_tutor 
+        WHERE tutor_id = NEW.id_tutor 
+          AND mensilita = DATE_FORMAT(NEW.data, '%Y-%m-01')
+          AND stato = 1
+    ) THEN
+
+        -- Calcolo delle ore singole intere
+        SELECT COUNT(*) INTO ore_singole
+        FROM lezioni
+        WHERE id_tutor = NEW.id_tutor
+          AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(NEW.data, '%Y-%m')
+          AND tipo = 'singolo'
+          AND durata = 0;
+
+        -- Calcolo delle mezze ore singole
+        SELECT COUNT(*) INTO mezze_ore_singole
+        FROM lezioni
+        WHERE id_tutor = NEW.id_tutor
+          AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(NEW.data, '%Y-%m')
+          AND tipo = 'singolo'
+          AND durata = 1;
+
+        -- Calcolo delle ore gruppo intere
+        SELECT COUNT(*) INTO ore_gruppo
+        FROM lezioni
+        WHERE id_tutor = NEW.id_tutor
+          AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(NEW.data, '%Y-%m')
+          AND tipo = 'gruppo'
+          AND durata = 0;
+
+        -- Calcolo delle mezze ore gruppo
+        SELECT COUNT(*) INTO mezze_ore_gruppo
+        FROM lezioni
+        WHERE id_tutor = NEW.id_tutor
+          AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(NEW.data, '%Y-%m')
+          AND tipo = 'gruppo'
+          AND durata = 1;
+
+        -- Calcolo totale ore: ore intere + (mezze ore / 2) arrotondato per difetto
+        SET totale_ore_singole = ore_singole + FLOOR(mezze_ore_singole / 2);
+        SET totale_ore_gruppo = ore_gruppo + FLOOR(mezze_ore_gruppo / 2);
+
+        -- Calcolo paga totale
+        SET totale_paga = (totale_ore_singole * 5) + (totale_ore_gruppo * 8);
+
+        -- Inserisci o aggiorna il record
+        INSERT INTO pagamenti_tutor (
+            tutor_id, mensilita, paga, ore_singole, ore_gruppo, 
+            mezze_ore_singole, mezze_ore_gruppo, stato
+        )
+        VALUES (
+            NEW.id_tutor, 
+            DATE_FORMAT(NEW.data, '%Y-%m-01'), 
+            totale_paga, 
+            ore_singole, 
+            ore_gruppo, 
+            mezze_ore_singole, 
+            mezze_ore_gruppo, 
+            0
+        )
+        ON DUPLICATE KEY UPDATE
+            paga = totale_paga,
+            ore_singole = ore_singole,
+            ore_gruppo = ore_gruppo,
+            mezze_ore_singole = mezze_ore_singole,
+            mezze_ore_gruppo = mezze_ore_gruppo,
+            stato = 0;
+
+    END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `aggiorna_pagamenti_tutor_delete` AFTER DELETE ON `lezioni` FOR EACH ROW BEGIN
+    DECLARE ore_singole INT DEFAULT 0;
+    DECLARE ore_gruppo INT DEFAULT 0;
+    DECLARE mezze_ore_singole INT DEFAULT 0;
+    DECLARE mezze_ore_gruppo INT DEFAULT 0;
+    DECLARE totale_ore_singole INT DEFAULT 0;
+    DECLARE totale_ore_gruppo INT DEFAULT 0;
+    DECLARE totale_paga DECIMAL(10,2) DEFAULT 0.00;
+
+    -- Aggiorna solo se NON pagato
+    IF NOT EXISTS (
+        SELECT 1 FROM pagamenti_tutor 
+        WHERE tutor_id = OLD.id_tutor 
+          AND mensilita = DATE_FORMAT(OLD.data, '%Y-%m-01')
+          AND stato = 1
+    ) THEN
+
+        -- Ricalcola tutto da zero dopo la cancellazione
+        SELECT COUNT(*) INTO ore_singole
+        FROM lezioni
+        WHERE id_tutor = OLD.id_tutor
+          AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(OLD.data, '%Y-%m')
+          AND tipo = 'singolo'
+          AND durata = 0;
+
+        SELECT COUNT(*) INTO mezze_ore_singole
+        FROM lezioni
+        WHERE id_tutor = OLD.id_tutor
+          AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(OLD.data, '%Y-%m')
+          AND tipo = 'singolo'
+          AND durata = 1;
+
+        SELECT COUNT(*) INTO ore_gruppo
+        FROM lezioni
+        WHERE id_tutor = OLD.id_tutor
+          AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(OLD.data, '%Y-%m')
+          AND tipo = 'gruppo'
+          AND durata = 0;
+
+        SELECT COUNT(*) INTO mezze_ore_gruppo
+        FROM lezioni
+        WHERE id_tutor = OLD.id_tutor
+          AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(OLD.data, '%Y-%m')
+          AND tipo = 'gruppo'
+          AND durata = 1;
+
+        -- Calcolo totale ore
+        SET totale_ore_singole = ore_singole + FLOOR(mezze_ore_singole / 2);
+        SET totale_ore_gruppo = ore_gruppo + FLOOR(mezze_ore_gruppo / 2);
+        SET totale_paga = (totale_ore_singole * 5) + (totale_ore_gruppo * 8);
+
+        -- Se ci sono ancora lezioni, aggiorna il record
+        IF (ore_singole + mezze_ore_singole + ore_gruppo + mezze_ore_gruppo) > 0 THEN
+            INSERT INTO pagamenti_tutor (
+                tutor_id, mensilita, paga, ore_singole, ore_gruppo, 
+                mezze_ore_singole, mezze_ore_gruppo, stato
+            )
+            VALUES (
+                OLD.id_tutor, 
+                DATE_FORMAT(OLD.data, '%Y-%m-01'), 
+                totale_paga, 
+                ore_singole, 
+                ore_gruppo, 
+                mezze_ore_singole, 
+                mezze_ore_gruppo, 
+                0
+            )
+            ON DUPLICATE KEY UPDATE
+                paga = totale_paga,
+                ore_singole = ore_singole,
+                ore_gruppo = ore_gruppo,
+                mezze_ore_singole = mezze_ore_singole,
+                mezze_ore_gruppo = mezze_ore_gruppo,
+                stato = 0;
+        ELSE
+            -- Se non ci sono più lezioni per quel mese, elimina il record
+            DELETE FROM pagamenti_tutor 
+            WHERE tutor_id = OLD.id_tutor 
+              AND mensilita = DATE_FORMAT(OLD.data, '%Y-%m-01')
+              AND stato = 0;
+        END IF;
+
+    END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `aggiorna_pagamenti_tutor_update` AFTER UPDATE ON `lezioni` FOR EACH ROW BEGIN
+    DECLARE ore_singole INT DEFAULT 0;
+    DECLARE ore_gruppo INT DEFAULT 0;
+    DECLARE mezze_ore_singole INT DEFAULT 0;
+    DECLARE mezze_ore_gruppo INT DEFAULT 0;
+    DECLARE totale_ore_singole INT DEFAULT 0;
+    DECLARE totale_ore_gruppo INT DEFAULT 0;
+    DECLARE totale_paga DECIMAL(10,2) DEFAULT 0.00;
+
+    -- Se cambia qualcosa di rilevante
+    IF DATE_FORMAT(OLD.data, '%Y-%m') != DATE_FORMAT(NEW.data, '%Y-%m') OR
+       OLD.id_tutor != NEW.id_tutor OR
+       OLD.tipo != NEW.tipo OR
+       OLD.durata != NEW.durata THEN
+
+        -- PRIMA: Aggiorna il vecchio mese/tutor se non pagato
+        IF NOT EXISTS (
+            SELECT 1 FROM pagamenti_tutor 
+            WHERE tutor_id = OLD.id_tutor 
+              AND mensilita = DATE_FORMAT(OLD.data, '%Y-%m-01')
+              AND stato = 1
+        ) THEN
+            -- Ricalcola per il vecchio mese/tutor
+            SELECT COUNT(*) INTO ore_singole
+            FROM lezioni
+            WHERE id_tutor = OLD.id_tutor
+              AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(OLD.data, '%Y-%m')
+              AND tipo = 'singolo'
+              AND durata = 0;
+
+            SELECT COUNT(*) INTO mezze_ore_singole
+            FROM lezioni
+            WHERE id_tutor = OLD.id_tutor
+              AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(OLD.data, '%Y-%m')
+              AND tipo = 'singolo'
+              AND durata = 1;
+
+            SELECT COUNT(*) INTO ore_gruppo
+            FROM lezioni
+            WHERE id_tutor = OLD.id_tutor
+              AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(OLD.data, '%Y-%m')
+              AND tipo = 'gruppo'
+              AND durata = 0;
+
+            SELECT COUNT(*) INTO mezze_ore_gruppo
+            FROM lezioni
+            WHERE id_tutor = OLD.id_tutor
+              AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(OLD.data, '%Y-%m')
+              AND tipo = 'gruppo'
+              AND durata = 1;
+
+            SET totale_ore_singole = ore_singole + FLOOR(mezze_ore_singole / 2);
+            SET totale_ore_gruppo = ore_gruppo + FLOOR(mezze_ore_gruppo / 2);
+            SET totale_paga = (totale_ore_singole * 5) + (totale_ore_gruppo * 8);
+
+            IF (ore_singole + mezze_ore_singole + ore_gruppo + mezze_ore_gruppo) > 0 THEN
+                INSERT INTO pagamenti_tutor (
+                    tutor_id, mensilita, paga, ore_singole, ore_gruppo, 
+                    mezze_ore_singole, mezze_ore_gruppo, stato
+                )
+                VALUES (
+                    OLD.id_tutor, 
+                    DATE_FORMAT(OLD.data, '%Y-%m-01'), 
+                    totale_paga, 
+                    ore_singole, 
+                    ore_gruppo, 
+                    mezze_ore_singole, 
+                    mezze_ore_gruppo, 
+                    0
+                )
+                ON DUPLICATE KEY UPDATE
+                    paga = totale_paga,
+                    ore_singole = ore_singole,
+                    ore_gruppo = ore_gruppo,
+                    mezze_ore_singole = mezze_ore_singole,
+                    mezze_ore_gruppo = mezze_ore_gruppo,
+                    stato = 0;
+            ELSE
+                DELETE FROM pagamenti_tutor 
+                WHERE tutor_id = OLD.id_tutor 
+                  AND mensilita = DATE_FORMAT(OLD.data, '%Y-%m-01')
+                  AND stato = 0;
+            END IF;
+        END IF;
+
+        -- POI: Aggiorna il nuovo mese/tutor se non pagato
+        IF NOT EXISTS (
+            SELECT 1 FROM pagamenti_tutor 
+            WHERE tutor_id = NEW.id_tutor 
+              AND mensilita = DATE_FORMAT(NEW.data, '%Y-%m-01')
+              AND stato = 1
+        ) THEN
+            -- Reset variabili
+            SET ore_singole = 0;
+            SET mezze_ore_singole = 0;
+            SET ore_gruppo = 0;
+            SET mezze_ore_gruppo = 0;
+            
+            -- Ricalcola per il nuovo mese/tutor
+            SELECT COUNT(*) INTO ore_singole
+            FROM lezioni
+            WHERE id_tutor = NEW.id_tutor
+              AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(NEW.data, '%Y-%m')
+              AND tipo = 'singolo'
+              AND durata = 0;
+
+            SELECT COUNT(*) INTO mezze_ore_singole
+            FROM lezioni
+            WHERE id_tutor = NEW.id_tutor
+              AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(NEW.data, '%Y-%m')
+              AND tipo = 'singolo'
+              AND durata = 1;
+
+            SELECT COUNT(*) INTO ore_gruppo
+            FROM lezioni
+            WHERE id_tutor = NEW.id_tutor
+              AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(NEW.data, '%Y-%m')
+              AND tipo = 'gruppo'
+              AND durata = 0;
+
+            SELECT COUNT(*) INTO mezze_ore_gruppo
+            FROM lezioni
+            WHERE id_tutor = NEW.id_tutor
+              AND DATE_FORMAT(data, '%Y-%m') = DATE_FORMAT(NEW.data, '%Y-%m')
+              AND tipo = 'gruppo'
+              AND durata = 1;
+
+            SET totale_ore_singole = ore_singole + FLOOR(mezze_ore_singole / 2);
+            SET totale_ore_gruppo = ore_gruppo + FLOOR(mezze_ore_gruppo / 2);
+            SET totale_paga = (totale_ore_singole * 5) + (totale_ore_gruppo * 8);
+
+            INSERT INTO pagamenti_tutor (
+                tutor_id, mensilita, paga, ore_singole, ore_gruppo, 
+                mezze_ore_singole, mezze_ore_gruppo, stato
+            )
+            VALUES (
+                NEW.id_tutor, 
+                DATE_FORMAT(NEW.data, '%Y-%m-01'), 
+                totale_paga, 
+                ore_singole, 
+                ore_gruppo, 
+                mezze_ore_singole, 
+                mezze_ore_gruppo, 
+                0
+            )
+            ON DUPLICATE KEY UPDATE
+                paga = totale_paga,
+                ore_singole = ore_singole,
+                ore_gruppo = ore_gruppo,
+                mezze_ore_singole = mezze_ore_singole,
+                mezze_ore_gruppo = mezze_ore_gruppo,
+                stato = 0;
+        END IF;
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `lezioni_alunni`
+--
 
 CREATE TABLE `lezioni_alunni` (
   `id_lezione` int(11) NOT NULL,
   `id_alunno` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `lezioni_alunni`
+--
+
+TRUNCATE TABLE `lezioni_alunni`;
+
+
+--
+-- Struttura della tabella `movimenti_contabili`
+--
+
+CREATE TABLE `movimenti_contabili` (
+  `id` int(11) NOT NULL,
+  `tipo` enum('entrata','uscita') NOT NULL,
+  `importo` decimal(10,2) NOT NULL,
+  `categoria` varchar(100) DEFAULT NULL,
+  `descrizione` text DEFAULT NULL,
+  `metodo_pagamento` enum('bonifico','contanti','pos','altro') DEFAULT NULL,
+  `data_movimento` date NOT NULL,
+  `riferimento_id` int(11) DEFAULT NULL,
+  `riferimento_tipo` enum('alunno','tutor','altro') DEFAULT NULL,
+  `fattura_emessa` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Svuota la tabella prima dell'inserimento `movimenti_contabili`
+--
+
+TRUNCATE TABLE `movimenti_contabili`;
+
+
+-- Struttura della tabella `movimenti_inventario`
+--
+
+CREATE TABLE `movimenti_inventario` (
+  `id` int(11) NOT NULL,
+  `id_prodotto` int(11) NOT NULL,
+  `tipo` enum('entrata','uscita') NOT NULL,
+  `quantita` int(11) NOT NULL,
+  `id_alunno` int(11) DEFAULT NULL,
+  `data_movimento` timestamp NOT NULL DEFAULT current_timestamp(),
+  `data_rientro` date DEFAULT NULL,
+  `note` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Svuota la tabella prima dell'inserimento `movimenti_inventario`
+--
+
+TRUNCATE TABLE `movimenti_inventario`;
+--
+-- Dump dei dati per la tabella `movimenti_inventario`
+--
+
+INSERT IGNORE INTO `movimenti_inventario` (`id`, `id_prodotto`, `tipo`, `quantita`, `id_alunno`, `data_movimento`, `data_rientro`, `note`) VALUES
+(1, 3, 'uscita', 1, 88, '2025-06-10 16:55:07', NULL, ''),
+(2, 2, 'uscita', 1, 49, '2025-06-10 18:43:59', '2025-06-10', ''),
+(3, 2, 'entrata', 1, 49, '2025-06-10 18:45:37', NULL, '');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `pacchetti`
+--
 
 CREATE TABLE `pacchetti` (
   `id` int(11) NOT NULL,
@@ -46,7 +662,39 @@ CREATE TABLE `pacchetti` (
   `prezzo` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `pacchetti`
+--
 
+TRUNCATE TABLE `pacchetti`;
+--
+-- Dump dei dati per la tabella `pacchetti`
+--
+
+INSERT IGNORE INTO `pacchetti` (`id`, `nome`, `tipo`, `ore`, `prezzo`) VALUES
+(1, '1H', 'orario', 1, 25.00),
+(2, '3H', 'orario', 3, 65.00),
+(3, '9H', 'orario', 9, 140.00),
+(4, '12H', 'orario', 12, 160.00),
+(5, '20H', 'orario', 20, 200.00),
+(6, '24H', 'orario', 24, 220.00),
+(7, 'Mensile 24H Medie e Superiori', 'mensile', 24, 210.00),
+(8, 'Mensile 24H Elementari', 'mensile', 24, 120.00),
+(9, 'Mensile 36H Medie e Superiori', 'mensile', 36, 270.00),
+(10, 'Mensile 36H Elementari', 'mensile', 36, 180.00),
+(11, 'Mensile 60H Medie e Superiori', 'mensile', 60, 300.00),
+(12, 'Mensile 60H Elementari', 'mensile', 60, 220.00),
+(13, 'Pro Bono', 'mensile', 0, 0.00),
+(14, 'Esame di stato', 'mensile', 36, 200.00),
+(15, 'A consumo', 'orario', 0, 0.00),
+(16, 'Esami Terza Media', 'mensile', 24, 150.00),
+(17, 'Esami/Test Universitari', 'orario', 24, 220.00);
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `pagamenti`
+--
 
 CREATE TABLE `pagamenti` (
   `id` int(11) NOT NULL,
@@ -60,17 +708,64 @@ CREATE TABLE `pagamenti` (
   `ore_effettuate` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `pagamenti`
+--
 
+TRUNCATE TABLE `pagamenti`;
+
+
+--
+-- Struttura della tabella `pagamenti_tutor`
+--
+
+CREATE TABLE `pagamenti_tutor` (
+  `id` int(11) NOT NULL,
+  `tutor_id` int(11) NOT NULL,
+  `mensilita` date NOT NULL,
+  `paga` decimal(10,2) NOT NULL,
+  `stato` tinyint(1) NOT NULL DEFAULT 0,
+  `data_pagamento` date DEFAULT NULL,
+  `ore_singole` int(11) NOT NULL DEFAULT 0,
+  `ore_gruppo` int(11) NOT NULL DEFAULT 0,
+  `mezze_ore_gruppo` int(11) NOT NULL DEFAULT 0,
+  `mezze_ore_singole` int(11) NOT NULL DEFAULT 0,
+  `note` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Svuota la tabella prima dell'inserimento `pagamenti_tutor`
+--
+
+TRUNCATE TABLE `pagamenti_tutor`;
+
+--
+-- Struttura della tabella `storico_modifiche`
+--
 
 CREATE TABLE `storico_modifiche` (
   `id` int(11) NOT NULL,
+  `id_alunno` int(11) NOT NULL,
   `id_utente` int(11) DEFAULT NULL,
-  `id_alunno` int(11) DEFAULT NULL,
-  `tipo_modifica` varchar(50) NOT NULL,
+  `campo_modificato` varchar(50) NOT NULL,
+  `valore_precedente` varchar(255) DEFAULT NULL,
+  `valore_nuovo` varchar(255) DEFAULT NULL,
   `dettagli` text DEFAULT NULL,
   `data_modifica` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `storico_modifiche`
+--
+
+TRUNCATE TABLE `storico_modifiche`;
+
+
+--
+-- Struttura della tabella `tutor`
+--
 
 CREATE TABLE `tutor` (
   `id` int(11) NOT NULL,
@@ -80,14 +775,62 @@ CREATE TABLE `tutor` (
   `telefono` varchar(15) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `tutor`
+--
 
+TRUNCATE TABLE `tutor`;
+--
+
+
+--
+-- Struttura della tabella `utenti`
+--
 
 CREATE TABLE `utenti` (
   `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL
+  `password` varchar(255) NOT NULL,
+  `ruolo` enum('admin','segreteria','tutor') DEFAULT 'segreteria'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Svuota la tabella prima dell'inserimento `utenti`
+--
+
+TRUNCATE TABLE `utenti`;
+--
+-- Dump dei dati per la tabella `utenti`
+--
+
+INSERT IGNORE INTO `utenti` (`id`, `username`, `password`, `ruolo`) VALUES
+(2, 'alessandro', 'd46a6166a7921e4e8df10d64c4b1ecdf', 'admin'),
+(3, 'segreteria', '201cdeadfabe8527bcc01207b79943ef', 'segreteria');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `valutazioni_tutor`
+--
+
+CREATE TABLE `valutazioni_tutor` (
+  `id` int(11) NOT NULL,
+  `tutor_id` int(11) NOT NULL,
+  `valutazione` int(11) NOT NULL CHECK (`valutazione` >= 1 and `valutazione` <= 5),
+  `note` text DEFAULT NULL,
+  `data_valutazione` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Svuota la tabella prima dell'inserimento `valutazioni_tutor`
+--
+
+
+
+--
+-- Indici per le tabelle scaricate
+--
 
 --
 -- Indici per le tabelle `alunni`
@@ -98,10 +841,24 @@ ALTER TABLE `alunni`
   ADD KEY `id_genitore` (`id_genitore`);
 
 --
+-- Indici per le tabelle `categorie_inventario`
+--
+ALTER TABLE `categorie_inventario`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nome` (`nome`);
+
+--
 -- Indici per le tabelle `genitori`
 --
 ALTER TABLE `genitori`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indici per le tabelle `inventario`
+--
+ALTER TABLE `inventario`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `codice` (`codice`);
 
 --
 -- Indici per le tabelle `lezioni`
@@ -115,6 +872,20 @@ ALTER TABLE `lezioni`
 --
 ALTER TABLE `lezioni_alunni`
   ADD PRIMARY KEY (`id_lezione`,`id_alunno`),
+  ADD KEY `id_alunno` (`id_alunno`);
+
+--
+-- Indici per le tabelle `movimenti_contabili`
+--
+ALTER TABLE `movimenti_contabili`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indici per le tabelle `movimenti_inventario`
+--
+ALTER TABLE `movimenti_inventario`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_prodotto` (`id_prodotto`),
   ADD KEY `id_alunno` (`id_alunno`);
 
 --
@@ -132,12 +903,19 @@ ALTER TABLE `pagamenti`
   ADD KEY `id_pacchetto` (`id_pacchetto`);
 
 --
+-- Indici per le tabelle `pagamenti_tutor`
+--
+ALTER TABLE `pagamenti_tutor`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unico_tutor_mese` (`tutor_id`,`mensilita`);
+
+--
 -- Indici per le tabelle `storico_modifiche`
 --
 ALTER TABLE `storico_modifiche`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `id_utente` (`id_utente`),
-  ADD KEY `id_alunno` (`id_alunno`);
+  ADD KEY `id_alunno` (`id_alunno`),
+  ADD KEY `id_utente` (`id_utente`);
 
 --
 -- Indici per le tabelle `tutor`
@@ -152,6 +930,13 @@ ALTER TABLE `utenti`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indici per le tabelle `valutazioni_tutor`
+--
+ALTER TABLE `valutazioni_tutor`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_tutor` (`tutor_id`);
+
+--
 -- AUTO_INCREMENT per le tabelle scaricate
 --
 
@@ -159,49 +944,85 @@ ALTER TABLE `utenti`
 -- AUTO_INCREMENT per la tabella `alunni`
 --
 ALTER TABLE `alunni`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+
+--
+-- AUTO_INCREMENT per la tabella `categorie_inventario`
+--
+ALTER TABLE `categorie_inventario`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT per la tabella `genitori`
 --
 ALTER TABLE `genitori`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
+
+--
+-- AUTO_INCREMENT per la tabella `inventario`
+--
+ALTER TABLE `inventario`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT per la tabella `lezioni`
 --
 ALTER TABLE `lezioni`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1337;
+
+--
+-- AUTO_INCREMENT per la tabella `movimenti_contabili`
+--
+ALTER TABLE `movimenti_contabili`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=130;
+
+--
+-- AUTO_INCREMENT per la tabella `movimenti_inventario`
+--
+ALTER TABLE `movimenti_inventario`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT per la tabella `pacchetti`
 --
 ALTER TABLE `pacchetti`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT per la tabella `pagamenti`
 --
 ALTER TABLE `pagamenti`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+
+--
+-- AUTO_INCREMENT per la tabella `pagamenti_tutor`
+--
+ALTER TABLE `pagamenti_tutor`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
 
 --
 -- AUTO_INCREMENT per la tabella `storico_modifiche`
 --
 ALTER TABLE `storico_modifiche`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
 
 --
 -- AUTO_INCREMENT per la tabella `tutor`
 --
 ALTER TABLE `tutor`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT per la tabella `utenti`
 --
 ALTER TABLE `utenti`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT per la tabella `valutazioni_tutor`
+--
+ALTER TABLE `valutazioni_tutor`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Limiti per le tabelle scaricate
@@ -228,6 +1049,13 @@ ALTER TABLE `lezioni_alunni`
   ADD CONSTRAINT `lezioni_alunni_ibfk_2` FOREIGN KEY (`id_alunno`) REFERENCES `alunni` (`id`) ON DELETE CASCADE;
 
 --
+-- Limiti per la tabella `movimenti_inventario`
+--
+ALTER TABLE `movimenti_inventario`
+  ADD CONSTRAINT `movimenti_inventario_ibfk_1` FOREIGN KEY (`id_prodotto`) REFERENCES `inventario` (`id`),
+  ADD CONSTRAINT `movimenti_inventario_ibfk_2` FOREIGN KEY (`id_alunno`) REFERENCES `alunni` (`id`);
+
+--
 -- Limiti per la tabella `pagamenti`
 --
 ALTER TABLE `pagamenti`
@@ -235,13 +1063,21 @@ ALTER TABLE `pagamenti`
   ADD CONSTRAINT `pagamenti_ibfk_2` FOREIGN KEY (`id_pacchetto`) REFERENCES `pacchetti` (`id`);
 
 --
+-- Limiti per la tabella `pagamenti_tutor`
+--
+ALTER TABLE `pagamenti_tutor`
+  ADD CONSTRAINT `pagamenti_tutor_ibfk_1` FOREIGN KEY (`tutor_id`) REFERENCES `tutor` (`id`) ON DELETE CASCADE;
+
+--
 -- Limiti per la tabella `storico_modifiche`
 --
 ALTER TABLE `storico_modifiche`
-  ADD CONSTRAINT `storico_modifiche_ibfk_1` FOREIGN KEY (`id_utente`) REFERENCES `utenti` (`id`),
-  ADD CONSTRAINT `storico_modifiche_ibfk_2` FOREIGN KEY (`id_alunno`) REFERENCES `alunni` (`id`);
+  ADD CONSTRAINT `storico_modifiche_ibfk_1` FOREIGN KEY (`id_alunno`) REFERENCES `alunni` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `storico_modifiche_ibfk_2` FOREIGN KEY (`id_utente`) REFERENCES `utenti` (`id`) ON DELETE SET NULL;
+
+--
+-- Limiti per la tabella `valutazioni_tutor`
+--
+ALTER TABLE `valutazioni_tutor`
+  ADD CONSTRAINT `valutazioni_tutor_ibfk_1` FOREIGN KEY (`tutor_id`) REFERENCES `tutor` (`id`) ON DELETE CASCADE;
 COMMIT;
-
-
-
-
