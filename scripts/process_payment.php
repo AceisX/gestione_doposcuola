@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $mensilitaId = intval($_POST['mensilita_id'] ?? 0);
 $importoPaga = trim($_POST['importo_paga'] ?? '');
 $notePaga = trim($_POST['note_paga'] ?? '');
+$dataPagamento = $_POST['data_pagamento'] ?? date('Y-m-d'); // Nuova riga per gestire la data
 
 if ($mensilitaId <= 0) {
     echo json_encode(['success' => false, 'message' => 'ID mensilità non valido.']);
@@ -20,6 +21,15 @@ if ($mensilitaId <= 0) {
 if (empty($importoPaga) && empty($notePaga)) {
     echo json_encode(['success' => false, 'message' => 'Nessun dato da salvare.']);
     exit;
+}
+
+// Valida la data
+if (!empty($dataPagamento)) {
+    $date = DateTime::createFromFormat('Y-m-d', $dataPagamento);
+    if (!$date || $date->format('Y-m-d') !== $dataPagamento) {
+        echo json_encode(['success' => false, 'message' => 'Data non valida.']);
+        exit;
+    }
 }
 
 // Recupera i dati della mensilità
@@ -45,12 +55,12 @@ if (!empty($notePaga)) {
 
 // Gestione pagamento
 if (!empty($importoPaga) && floatval($importoPaga) > 0) {
-    // Aggiorna lo stato a pagato
+    // Aggiorna lo stato a pagato con la data specificata
     $sql = "UPDATE pagamenti_tutor 
-            SET paga = ?, stato = 1, data_pagamento = CURDATE(), note = ?
+            SET paga = ?, stato = 1, data_pagamento = ?, note = ?
             WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('dsi', $importoPaga, $notePaga, $mensilitaId);
+    $stmt->bind_param('dssi', $importoPaga, $dataPagamento, $notePaga, $mensilitaId);
 } else {
     // Aggiorna solo le note
     $sql = "UPDATE pagamenti_tutor 

@@ -387,6 +387,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 if (dettagliAlunno.success) {
+                    // Imposta il nome dell'alunno nel modale
+                    const studentNameDisplay = document.getElementById('student-name-display');
+                    if (studentNameDisplay) {
+                        studentNameDisplay.textContent = dettagliAlunno.alunno.nome_completo;
+                    }
+
                     // Imposta il prezzo con gestione degli errori
                     const totale_pagato_field = document.getElementById('totale-pagato');
                     if (totale_pagato_field) {
@@ -630,19 +636,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         contentDiv.innerHTML = '<p>Nessun pagamento trovato per questo periodo.</p>';
                     } else {
                         contentDiv.innerHTML = result.data.map(payment => `
-                            <div class="payment-detail-item">
-                                <div>
-                                    <strong>€${payment.totale_pagato}</strong>
-                                    <br>
-                                    Data: ${formatDate(payment.data_pagamento)}
-                                    <br>
-                                    Tipo: ${payment.tipologia}
-                                </div>
-                                <button onclick="deletePagamento(${payment.id})">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        `).join('');
+        <div class="payment-detail-card">
+            <div class="payment-info">
+                <span class="payment-amount">€${parseFloat(payment.totale_pagato).toFixed(2)}</span>
+                <span class="payment-date">${formatDate(payment.data_pagamento)}</span>
+                <span class="payment-method">${payment.metodo_pagamento || ''}</span>
+                <span class="payment-type">${payment.tipologia}</span>
+            </div>
+            <button class="delete-btn" onclick="deletePagamento(${payment.id})">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+    `).join('');
                     }
 
                     modal.style.display = 'block';
@@ -664,3 +669,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+

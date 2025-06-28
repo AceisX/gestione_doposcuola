@@ -9,12 +9,25 @@ if ($tutorId <= 0) {
 }
 
 $sql = "
-    SELECT t.nome, t.cognome, pt.id, DATE_FORMAT(pt.mensilita, '%b %Y') AS mese, pt.paga, pt.ore_singole, pt.ore_gruppo, pt.data_pagamento, pt.stato, pt.note
+    SELECT 
+        t.nome, 
+        t.cognome, 
+        pt.id, 
+        DATE_FORMAT(pt.mensilita, '%b %Y') AS mese, 
+        pt.paga, 
+        (pt.ore_singole + FLOOR(pt.mezze_ore_singole/2)) as ore_singole_totali,
+        (pt.ore_gruppo + FLOOR(pt.mezze_ore_gruppo/2)) as ore_gruppo_totali,
+        pt.ore_singole,
+        pt.ore_gruppo,
+        pt.mezze_ore_singole,
+        pt.mezze_ore_gruppo,
+        pt.data_pagamento, 
+        pt.stato, 
+        pt.note
     FROM tutor t
     LEFT JOIN pagamenti_tutor pt ON t.id = pt.tutor_id
     WHERE t.id = ?
     ORDER BY pt.mensilita DESC
-    LIMIT 5
 ";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $tutorId);
