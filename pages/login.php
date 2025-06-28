@@ -65,30 +65,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Gestione Doposcuola</title>
-    <link rel="stylesheet" href="../assets/styles.css"> <!-- Link al file CSS -->
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="../assets/fontawesome/css/all.min.css">
 </head>
 <body>
     <div class="login-container">
-        <h1>Login</h1>
-        <?php
-        // Mostriamo eventuali errori
-        if (!empty($error)) {
-            echo "<div class='error'>$error</div>";
-        }
-        ?>
-        <form action="login.php" method="POST">
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" name="username" id="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" name="password" id="password" required>
-            </div>
-            <div class="form-group">
-                <button type="submit">Accedi</button>
-            </div>
-        </form>
+        <div class="login-card">
+            <h1>Accesso</h1>
+            <?php if (!empty($error)): ?>
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?php echo $error; ?>
+                </div>
+            <?php endif; ?>
+            <form action="login.php" method="POST" autocomplete="off">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user"></i>
+                        Username
+                    </label>
+                    <input type="text" 
+                           name="username" 
+                           id="username" 
+                           required 
+                           placeholder="Inserisci il tuo username"
+                           autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <input type="password" 
+                           name="password" 
+                           id="password" 
+                           required
+                           placeholder="Inserisci la tua password">
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Accedi
+                </button>
+            </form>
+        </div>
     </div>
 </body>
 </html>
