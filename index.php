@@ -20,6 +20,9 @@ $oreTotaliMese = 0;
 
 // Query per le statistiche della dashboard
 try {
+
+  
+
     // Query per il totale degli alunni
     $queryTotaleAlunni = "SELECT COUNT(*) as totale FROM alunni";
     $resultTotale = $conn->query($queryTotaleAlunni);
@@ -44,7 +47,7 @@ try {
     }
 
     // Query per le ore totali del mese
-    $queryOreTotaliMese = "SELECT COALESCE(SUM(ore_eff), 0) as totale FROM pagamenti 
+    $queryOreTotaliMese = "SELECT COALESCE(SUM(ore_effettuate), 0) as totale FROM pagamenti 
                           WHERE MONTH(data_pagamento) = MONTH(CURRENT_DATE)
                           AND YEAR(data_pagamento) = YEAR(CURRENT_DATE)";
     $resultOre = $conn->query($queryOreTotaliMese);
@@ -121,7 +124,7 @@ $result = $conn->query($sql);
   <link href="assets/fontawesome/css/sharp-duotone-thin.css" rel="stylesheet" />
 </head>
 <body>
-    <?php include __DIR__ . '/assets/header.html'; ?>   
+    <?php include __DIR__ . '/assets/header.php'; ?>   
 
     <main class="container">
 	
@@ -221,10 +224,8 @@ $result = $conn->query($sql);
                             <td><?php echo htmlspecialchars($row['pacchetto']); ?></td>
                             <td>€<?php echo htmlspecialchars(number_format($row['prezzo_finale'], 2)); ?></td>
                             <td>
-								<span class="status <?php echo $row['stato'] === 'attivo' ? 'active' : 'inactive'; ?>">
-																														●
-								</span>
-							</td>
+                                <span class="status <?php echo $row['stato'] === 'attivo' ? 'active' : 'inactive'; ?>"></span>
+                            </td>
                             <td><?php echo htmlspecialchars($row['data_iscrizione']); ?></td>
                             <td>
                                 <button class="info-btn" data-id="<?php echo $row['alunno_id']; ?>"><i class="fa-solid fa-circle-info" style="color: #ffffff;"></i></button>
@@ -596,6 +597,7 @@ endif;
     <div class="modal-content">
         <span class="close-btn">&times;</span>
         <h2>Registra Pagamento</h2>
+        <h3 id="student-name-display"></h3>
         <form id="pagamento-form" action="scripts/registra_pagamento.php" method="POST">
             <input type="hidden" name="alunno_id" id="pagamento-alunno-id">
 			<input type="hidden" id="pagamento-pacchetto-id" name="id_pacchetto">
